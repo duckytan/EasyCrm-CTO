@@ -1,0 +1,16 @@
+# General
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+dist/
+build/
+coverage/
+
+# Environment
+.env
+.env.*
