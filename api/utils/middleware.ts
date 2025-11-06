@@ -11,10 +11,10 @@ const loginAttempts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
 const MAX_LOGIN_ATTEMPTS = 5;
 
-export function withAuth(
-  handler: (req: AuthenticatedRequest, res: VercelResponse) => Promise<void>
+export function withAuth<T extends any[]>(
+  handler: (req: AuthenticatedRequest, res: VercelResponse, ...rest: T) => Promise<void>
 ) {
-  return async (req: AuthenticatedRequest, res: VercelResponse) => {
+  return async (req: AuthenticatedRequest, res: VercelResponse, ...rest: T) => {
     try {
       const authHeader = req.headers.authorization;
       
@@ -30,7 +30,7 @@ export function withAuth(
       try {
         const payload = verifyAccessToken(token);
         req.user = payload;
-        return await handler(req, res);
+        return await handler(req, res, ...rest);
       } catch (error) {
         return res.status(401).json({
           error: 'Unauthorized',
@@ -47,10 +47,10 @@ export function withAuth(
   };
 }
 
-export function withRateLimit(
-  handler: (req: VercelRequest, res: VercelResponse) => Promise<void>
+export function withRateLimit<T extends any[]>(
+  handler: (req: VercelRequest, res: VercelResponse, ...rest: T) => Promise<void>
 ) {
-  return async (req: VercelRequest, res: VercelResponse) => {
+  return async (req: VercelRequest, res: VercelResponse, ...rest: T) => {
     const ip =
       (Array.isArray(req.headers['x-forwarded-for'])
         ? req.headers['x-forwarded-for'][0]
@@ -86,7 +86,7 @@ export function withRateLimit(
     }) as typeof res.status;
 
     try {
-      await handler(req, res);
+      await handler(req, res, ...rest);
     } finally {
       res.status = originalStatus;
       const status = responseStatus ?? res.statusCode;
@@ -108,14 +108,14 @@ export function withRateLimit(
   };
 }
 
-export function withValidation<T>(
+export function withValidation<T, R extends any[]>(
   schema: ZodSchema<T>,
-  handler: (req: VercelRequest, res: VercelResponse, data: T) => Promise<void>
+  handler: (req: VercelRequest, res: VercelResponse, data: T, ...rest: R) => Promise<void>
 ) {
-  return async (req: VercelRequest, res: VercelResponse) => {
+  return async (req: VercelRequest, res: VercelResponse, ...rest: R) => {
     try {
       const data = schema.parse(req.body);
-      return await handler(req, res, data);
+      return await handler(req, res, data, ...rest);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({
@@ -137,11 +137,11 @@ export function withValidation<T>(
   };
 }
 
-export function withMethodCheck(
+export function withMethodCheck<T extends any[]>(
   allowedMethods: string[],
-  handler: (req: VercelRequest, res: VercelResponse) => Promise<void>
+  handler: (req: VercelRequest, res: VercelResponse, ...rest: T) => Promise<void>
 ) {
-  return async (req: VercelRequest, res: VercelResponse) => {
+  return async (req: VercelRequest, res: VercelResponse, ...rest: T) => {
     if (!req.method || !allowedMethods.includes(req.method)) {
       return res.status(405).json({
         error: 'Method Not Allowed',
@@ -149,16 +149,16 @@ export function withMethodCheck(
       });
     }
     
-    return await handler(req, res);
+    return await handler(req, res, ...rest);
   };
 }
 
-export function withErrorHandler(
-  handler: (req: VercelRequest, res: VercelResponse) => Promise<void>
+export function withErrorHandler<T extends any[]>(
+  handler: (req: VercelRequest, res: VercelResponse, ...rest: T) => Promise<void>
 ) {
-  return async (req: VercelRequest, res: VercelResponse) => {
+  return async (req: VercelRequest, res: VercelResponse, ...rest: T) => {
     try {
-      return await handler(req, res);
+      return await handler(req, res, ...rest);
     } catch (error) {
       console.error('Request handler error:', error);
       
