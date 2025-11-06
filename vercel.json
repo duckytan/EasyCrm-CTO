@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "buildCommand": "npm run prisma:generate",
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "nodejs18.x",
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "JWT_SECRET": "@jwt_secret",
+    "JWT_REFRESH_SECRET": "@jwt_refresh_secret"
+  },
+  "crons": [
+    {
+      "path": "/api/cron/daily-backup",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}
