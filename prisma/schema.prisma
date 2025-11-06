@@ -1,0 +1,308 @@
+// AI-CRM Serverless 数据模型定义
+// 参考文档：doc_move/01_项目需求规格说明.md 第 4 节
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// 管理员账户
+model Manager {
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
+  displayName String?      @map("display_name")
+  passwordHash String      @map("password_hash")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  settings    UserSetting?
+  auditLogs   ManagerAuditLog[]
+
+  @@map("managers")
+}
+
+/// 管理员用户设置
+model UserSetting {
+  id               Int      @id @default(autoincrement())
+  managerId        Int      @unique @map("manager_id")
+  darkMode         Boolean  @default(false) @map("dark_mode")
+  visitReminder    Boolean  @default(true) @map("visit_reminder")
+  birthdayReminder Boolean  @default(true) @map("birthday_reminder")
+  language         String   @default("zh-CN")
+  lastBackup       DateTime? @map("last_backup")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  manager Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+/// 管理操作日志（用于备份、恢复、清空等敏感操作）
+model ManagerAuditLog {
+  id        Int      @id @default(autoincrement())
+  managerId Int      @map("manager_id")
+  action    String
+  detail    String?  @db.Text
+  ip        String?
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  manager Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
+
+  @@index([managerId])
+  @@index([createdAt])
+  @@map("manager_audit_logs")
+}
+
+/// 客户信息
+model Customer {
+  id                    Int       @id @default(autoincrement())
+  name                  String
+  phone                 String    @unique
+  email                 String?
+  company               String?
+  gender                String?
+  birthday              DateTime? @db.Date
+  address               String?
+  demand                String?   @db.Text
+  wechat                String?
+  whatsapp              String?
+  facebook              String?
+  remark                String?   @db.Text
+  subordinateContactIds String?   @map("subordinate_contact_ids") @db.Text
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  customerCategoryId    String?   @map("customer_category_id")
+  customerCategory      CustomerCategory? @relation("CustomerCategoryCustomers", fields: [customerCategoryId], references: [id])
+
+  customerIntentionLevel String?  @map("customer_intention_level")
+  customerIntention      CustomerIntention? @relation("CustomerIntentionCustomers", fields: [customerIntentionLevel], references: [level])
+
+  regionId              String?   @map("region_id")
+  region                Region?   @relation(fields: [regionId], references: [id])
+
+  budgetRangeId         String?   @map("budget_range_id")
+  budgetRange           BudgetRange? @relation(fields: [budgetRangeId], references: [id])
+
+  superiorContactId     Int?      @map("superior_contact_id")
+  superiorContact       SuperiorContact? @relation(fields: [superiorContactId], references: [id])
+
+  plannedVisitDate      DateTime? @map("planned_visit_date") @db.Date
+  plannedVisitContent   String?   @map("planned_visit_content") @db.Text
+  plannedVisitMethodId  Int?      @map("planned_visit_method_id")
+  plannedVisitMethod    VisitMethod? @relation("CustomerPlannedVisitMethod", fields: [plannedVisitMethodId], references: [id])
+
+  visits                Visit[]
+  orders                ProductOrder[]
+
+  @@index([email])
+  @@index([customerCategoryId])
+  @@index([customerIntentionLevel])
+  @@index([createdAt])
+  @@map("customers")
+}
+
+/// 回访记录
+model Visit {
+  id              Int       @id @default(autoincrement())
+  customerId      Int       @map("customer_id")
+  visitTime       DateTime  @map("visit_time")
+  content         String    @db.Text
+  effect          String?
+  satisfaction    String?
+  followUp        String?   @map("follow_up") @db.Text
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  visitTypeId     Int?      @map("visit_type_id")
+  visitType       VisitType? @relation(fields: [visitTypeId], references: [id])
+
+  visitMethodId   Int?      @map("visit_method_id")
+  visitMethod     VisitMethod? @relation("VisitActualMethod", fields: [visitMethodId], references: [id])
+
+  intentionLevel  String?   @map("intention_level")
+  intention       CustomerIntention? @relation("VisitIntentionResult", fields: [intentionLevel], references: [level])
+
+  customer        Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([visitTime])
+  @@map("visits")
+}
+
+/// 产品订单
+model ProductOrder {
+  id           Int       @id @default(autoincrement())
+  customerId   Int       @map("customer_id")
+  productName  String    @map("product_name")
+  quantity     Int       @default(1)
+  price        Decimal   @db.Decimal(12, 2)
+  purchaseDate DateTime  @map("purchase_date") @db.Date
+  afterSale    String?   @map("after_sale")
+  followUpDate DateTime? @map("follow_up_date") @db.Date
+  note         String?   @db.Text
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  customer     Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([purchaseDate])
+  @@index([followUpDate])
+  @@map("products")
+}
+
+/// 客户分类
+model CustomerCategory {
+  id           String @id
+  name         String
+  description  String?
+  displayOrder Int    @default(0) @map("display_order")
+
+  customers    Customer[] @relation("CustomerCategoryCustomers")
+
+  @@index([displayOrder])
+  @@map("customer_categories")
+}
+
+/// 客户意向等级
+model CustomerIntention {
+  level            String @id
+  name             String
+  description      String?
+  criteria         String? @db.Text
+  followUpPriority Int?    @map("follow_up_priority")
+  displayOrder     Int     @default(0) @map("display_order")
+
+  customers        Customer[] @relation("CustomerIntentionCustomers")
+  visits           Visit[]    @relation("VisitIntentionResult")
+
+  @@index([displayOrder])
+  @@map("customer_intentions")
+}
+
+/// 地区
+model Region {
+  id           String @id
+  name         String
+  displayOrder Int    @default(0) @map("display_order")
+
+  customers    Customer[]
+
+  @@index([displayOrder])
+  @@unique([name])
+  @@map("regions")
+}
+
+/// 预算范围
+model BudgetRange {
+  id           String @id
+  name         String
+  displayOrder Int    @default(0) @map("display_order")
+
+  customers    Customer[]
+
+  @@index([displayOrder])
+  @@unique([name])
+  @@map("budget_ranges")
+}
+
+/// 上级联系人
+model SuperiorContact {
+  id           Int     @id @default(autoincrement())
+  name         String
+  company      String?
+  isDirect     Boolean @default(false) @map("is_direct")
+  displayOrder Int     @default(0) @map("display_order")
+
+  customers    Customer[]
+
+  @@index([displayOrder])
+  @@unique([name])
+  @@map("superior_contacts")
+}
+
+/// 下级联系人
+model SubordinateContact {
+  id           Int     @id @default(autoincrement())
+  name         String
+  company      String?
+  isDirect     Boolean @default(false) @map("is_direct")
+  displayOrder Int     @default(0) @map("display_order")
+
+  @@index([displayOrder])
+  @@unique([name])
+  @@map("subordinate_contacts")
+}
+
+/// 预设产品
+model PresetProduct {
+  id           Int      @id @default(autoincrement())
+  productName  String   @map("product_name")
+  price        Decimal? @db.Decimal(12, 2)
+  description  String?  @db.Text
+  displayOrder Int      @default(0) @map("display_order")
+
+  @@index([displayOrder])
+  @@unique([productName])
+  @@map("preset_products")
+}
+
+/// 回访方式
+model VisitMethod {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String?
+  displayOrder Int      @default(0) @map("display_order")
+
+  plannedCustomers Customer[] @relation("CustomerPlannedVisitMethod")
+  visits           Visit[]    @relation("VisitActualMethod")
+
+  @@index([displayOrder])
+  @@unique([name])
+  @@map("visit_methods")
+}
+
+/// 回访类型
+model VisitType {
+  id           Int     @id @default(autoincrement())
+  name         String
+  description  String?
+  displayOrder Int     @default(0) @map("display_order")
+
+  visits Visit[]
+
+  @@index([displayOrder])
+  @@unique([name])
+  @@map("visit_types")
+}
+
+/// 导航模式
+model NavigationMode {
+  id           Int     @id @default(autoincrement())
+  name         String
+  urlPattern   String? @map("url_pattern")
+  displayOrder Int     @default(0) @map("display_order")
+
+  @@index([displayOrder])
+  @@unique([name])
+  @@map("navigation_modes")
+}
+
+/// 提醒周期
+model ReminderCycle {
+  id           Int     @id @default(autoincrement())
+  name         String
+  days         Int
+  displayOrder Int     @default(0) @map("display_order")
+
+  @@index([displayOrder])
+  @@unique([name])
+  @@map("reminder_cycles")
+}

@@ -13,4 +13,10 @@ coverage/
 
 # Environment
 .env
-.env.*
+.env.local
+.env*.local
+.vercel
+
+# Prisma
+prisma/*.db
+prisma/*.db-journal
