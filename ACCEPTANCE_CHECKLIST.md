@@ -177,29 +177,29 @@
 ## Phase 3：仪表盘与提醒验收清单
 
 ### API 实现
-- [ ] **WBS-3.1** 仪表盘统计算法实现
-  - [ ] 月度销售额计算正确
-  - [ ] 月度订单数计算正确
-  - [ ] 平均订单金额计算正确
-  - [ ] 月度新增客户计算正确
-  - [ ] 月度回访次数计算正确
-  - [ ] 月度成交客户数（去重）计算正确
+- [x] **WBS-3.1** 仪表盘统计算法实现
+  - [x] 月度销售额计算正确
+  - [x] 月度订单数计算正确
+  - [x] 平均订单金额计算正确
+  - [x] 月度新增客户计算正确
+  - [x] 月度回访次数计算正确
+  - [x] 月度成交客户数（去重）计算正确
 
-- [ ] **WBS-3.2** 提醒聚合算法实现
-  - [ ] 计划回访提醒正确识别（planned_visit_date 在未来 30 天内）
-  - [ ] 产品回访提醒正确识别（followUpDate 在未来 30 天内）
-  - [ ] 客户生日提醒正确识别（birthday 月-日在未来 30 天内）
-  - [ ] 提醒列表按 reminderDate 升序排序
+- [x] **WBS-3.2** 提醒聚合算法实现
+  - [x] 计划回访提醒正确识别（planned_visit_date 在未来 30 天内）
+  - [x] 产品回访提醒正确识别（followUpDate 在未来 30 天内）
+  - [x] 客户生日提醒正确识别（birthday 月-日在未来 30 天内）
+  - [x] 提醒列表按 reminderDate 升序排序
 
-- [ ] **WBS-3.3** 仪表盘接口（`api/dashboard/statistics.ts`）
-  - [ ] `GET /api/dashboard/statistics` 返回完整数据
-  - [ ] 意向分布数据正确
-  - [ ] importantReminders 数组完整
+- [x] **WBS-3.3** 仪表盘接口（`api/dashboard/statistics.ts`）
+  - [x] `GET /api/dashboard/statistics` 返回完整数据
+  - [x] 意向分布数据正确
+  - [x] importantReminders 数组完整
 
-- [ ] **WBS-3.4-3.5** Cron 任务
-  - [ ] `vercel.json` 配置 cron 正确
-  - [ ] `api/cron/daily-backup.ts` 实现完成
-  - [ ] 手动触发备份任务成功
+- [x] **WBS-3.4-3.5** Cron 任务
+  - [x] `vercel.json` 配置 cron 正确
+  - [x] `api/cron/daily-backup.ts` 实现完成
+  - [x] 手动触发备份任务成功
 
 ### 数据验证
 - [ ] **准备测试数据**：
@@ -235,9 +235,9 @@
 ## Phase 4：预设数据管理验收清单
 
 ### API 实现（所有预设表）
-- [ ] **客户分类**（`api/presets/customer-categories.ts`）
-  - [ ] GET / POST / PUT / DELETE 全部实现
-  - [ ] 按 displayOrder 升序返回
+- [x] **客户分类**（`api/presets/customer-categories.ts`）
+  - [x] GET / POST / PUT / DELETE 全部实现
+  - [x] 按 displayOrder 升序返回
   
 - [ ] **客户意向**（`api/presets/customer-intentions.ts`）
   - [ ] GET / POST / PUT / DELETE 全部实现
