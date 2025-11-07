@@ -4,15 +4,15 @@
 
 ## 📁 文件说明
 
-- `index.html` - 登录页面
-- `dashboard.html` - 仪表盘（主页）
-- `customers.html` - 客户列表页
-- `customer-detail.html` - 客户详情页
-- `visits.html` - 回访记录页
-- `products.html` - 产品订单页
-- `presets.html` - 预设数据管理页
-- `settings.html` - 用户设置页
-- `assets/` - 样式和脚本（如果需要）
+- `index.html`(./index.html) - 登录页面
+- `dashboard.html`(./dashboard.html) - 仪表盘（主页）
+- `customers.html`(./customers.html) - 客户列表页
+- `customer-detail.html`(./customer-detail.html) - 客户详情页
+- `visits.html`(./visits.html) - 回访记录页
+- `products.html`(./products.html) - 产品订单页
+- `presets.html`(./presets.html) - 预设数据管理页
+- `settings.html`(./settings.html) - 用户设置页
+- `assets/`(./assets/) - 样式和脚本（如果需要）
 
 ## 🚀 如何预览
 
