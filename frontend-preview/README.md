@@ -4,7 +4,7 @@
 
 ## 📁 文件说明
 
-- `index.html`(./index.html) - 登录页面
+- [`index.html`](./index.html) - 登录页面
 - `dashboard.html`(./dashboard.html) - 仪表盘（主页）
 - `customers.html`(./customers.html) - 客户列表页
 - `customer-detail.html`(./customer-detail.html) - 客户详情页
