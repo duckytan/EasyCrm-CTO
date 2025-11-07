@@ -78,9 +78,20 @@
       <main class="page-content" x-data="{
         categories: mockData.presetCategories,
         activeCategory: 'customer-categories',
-        data: mockData.customerCategories,
         get currentCategory() {
           return this.categories.find(c => c.id === this.activeCategory);
+        },
+        get currentData() {
+          switch(this.activeCategory) {
+            case 'customer-categories': return mockData.customerCategories;
+            case 'customer-intentions': return mockData.customerIntentions;
+            case 'regions': return mockData.regions;
+            case 'budget-ranges': return mockData.budgetRanges;
+            case 'visit-methods': return mockData.visitMethods;
+            case 'visit-types': return mockData.visitTypes;
+            case 'preset-products': return mockData.presetProducts;
+            default: return [];
+          }
         }
       }">
         <section class="section">
@@ -121,12 +132,15 @@
           <!-- 客户分类 -->
           <div x-show="activeCategory === 'customer-categories'" x-transition>
             <div class="list">
-              <template x-for="item in data" :key="item.id">
+              <template x-for="item in currentData" :key="item.id">
                 <div class="card">
                   <div class="list-item" style="align-items: center;">
                     <div style="flex: 1;">
                       <div class="list-item__primary" x-text="item.name"></div>
                       <div class="list-item__meta" x-text="item.description"></div>
+                      <div style="margin-top: 6px;">
+                        <span class="tag tag-neutral" x-text="`使用次数: ${item.count}`"></span>
+                      </div>
                     </div>
                     <div class="inline-actions">
                       <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
@@ -138,58 +152,147 @@
             </div>
           </div>
 
-          <!-- 其他分类 -->
+          <!-- 意向等级 -->
           <div x-show="activeCategory === 'customer-intentions'" x-transition>
-            <div class="card">
-              <div class="empty-state">
-                <p>此分类下暂无数据</p>
-                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
-              </div>
+            <div class="list">
+              <template x-for="item in currentData" :key="item.id">
+                <div class="card">
+                  <div class="list-item" style="align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                      <div style="width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;" :style="`background: ${item.color};`"></div>
+                      <div style="flex: 1;">
+                        <div class="list-item__primary" x-text="item.name"></div>
+                        <div class="list-item__meta" x-text="item.description"></div>
+                        <div style="margin-top: 6px;">
+                          <span class="tag tag-neutral" x-text="`客户数: ${item.count}`"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="inline-actions">
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem; color: #ef4444;" @click="if(confirm('确认删除？')) { showToast('已删除', 'success'); }">删除</button>
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
 
+          <!-- 地区管理 -->
           <div x-show="activeCategory === 'regions'" x-transition>
-            <div class="card">
-              <div class="empty-state">
-                <p>此分类下暂无数据</p>
-                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
-              </div>
+            <div class="list">
+              <template x-for="item in currentData" :key="item.id">
+                <div class="card">
+                  <div class="list-item" style="align-items: center;">
+                    <div style="flex: 1;">
+                      <div class="list-item__primary" x-text="item.name"></div>
+                      <div class="list-item__meta" x-text="item.description"></div>
+                      <div style="margin-top: 6px;">
+                        <span class="tag tag-neutral" x-text="`客户数: ${item.count}`"></span>
+                      </div>
+                    </div>
+                    <div class="inline-actions">
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem; color: #ef4444;" @click="if(confirm('确认删除？')) { showToast('已删除', 'success'); }">删除</button>
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
 
+          <!-- 预算范围 -->
           <div x-show="activeCategory === 'budget-ranges'" x-transition>
-            <div class="card">
-              <div class="empty-state">
-                <p>此分类下暂无数据</p>
-                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
-              </div>
+            <div class="list">
+              <template x-for="item in currentData" :key="item.id">
+                <div class="card">
+                  <div class="list-item" style="align-items: center;">
+                    <div style="flex: 1;">
+                      <div class="list-item__primary" x-text="item.name"></div>
+                      <div class="list-item__meta" x-text="item.description"></div>
+                      <div style="margin-top: 6px;">
+                        <span class="tag tag-neutral" x-text="`客户数: ${item.count}`"></span>
+                      </div>
+                    </div>
+                    <div class="inline-actions">
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem; color: #ef4444;" @click="if(confirm('确认删除？')) { showToast('已删除', 'success'); }">删除</button>
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
 
+          <!-- 回访方式 -->
           <div x-show="activeCategory === 'visit-methods'" x-transition>
-            <div class="card">
-              <div class="empty-state">
-                <p>此分类下暂无数据</p>
-                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
-              </div>
+            <div class="list">
+              <template x-for="item in currentData" :key="item.id">
+                <div class="card">
+                  <div class="list-item" style="align-items: center;">
+                    <div style="flex: 1;">
+                      <div class="list-item__primary" x-text="item.name"></div>
+                      <div class="list-item__meta" x-text="item.description"></div>
+                      <div style="margin-top: 6px;">
+                        <span class="tag tag-neutral" x-text="`使用次数: ${item.count}`"></span>
+                      </div>
+                    </div>
+                    <div class="inline-actions">
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem; color: #ef4444;" @click="if(confirm('确认删除？')) { showToast('已删除', 'success'); }">删除</button>
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
 
+          <!-- 回访类型 -->
           <div x-show="activeCategory === 'visit-types'" x-transition>
-            <div class="card">
-              <div class="empty-state">
-                <p>此分类下暂无数据</p>
-                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
-              </div>
+            <div class="list">
+              <template x-for="item in currentData" :key="item.id">
+                <div class="card">
+                  <div class="list-item" style="align-items: center;">
+                    <div style="flex: 1;">
+                      <div class="list-item__primary" x-text="item.name"></div>
+                      <div class="list-item__meta" x-text="item.description"></div>
+                      <div style="margin-top: 6px;">
+                        <span class="tag tag-neutral" x-text="`使用次数: ${item.count}`"></span>
+                      </div>
+                    </div>
+                    <div class="inline-actions">
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem; color: #ef4444;" @click="if(confirm('确认删除？')) { showToast('已删除', 'success'); }">删除</button>
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
 
+          <!-- 预设产品 -->
           <div x-show="activeCategory === 'preset-products'" x-transition>
-            <div class="card">
-              <div class="empty-state">
-                <p>此分类下暂无数据</p>
-                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
-              </div>
+            <div class="list">
+              <template x-for="item in currentData" :key="item.id">
+                <div class="card">
+                  <div class="list-item" style="align-items: center;">
+                    <div style="flex: 1;">
+                      <div class="list-item__primary" x-text="item.name"></div>
+                      <div class="list-item__meta">
+                        <span x-text="`产品编码: ${item.code}`"></span> · 
+                        <span x-text="`类别: ${item.category}`"></span>
+                      </div>
+                      <div style="margin-top: 6px;">
+                        <span class="tag" x-text="formatCurrency(item.price)"></span>
+                      </div>
+                    </div>
+                    <div class="inline-actions">
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem; color: #ef4444;" @click="if(confirm('确认删除？')) { showToast('已删除', 'success'); }">删除</button>
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </section>
