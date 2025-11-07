@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - AI-CRM 系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        secondary: '#10B981',
+                        accent: '#F97316',
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', 'Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .login-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .dark .login-card {
+            background: rgba(15, 23, 42, 0.95);
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="antialiased" x-data="{ darkMode: false }" :class="{ 'dark': darkMode }">
+    <div class="min-h-screen gradient-bg dark:bg-gray-900 flex items-center justify-center p-4 transition-colors duration-300">
+        <!-- 深色模式切换按钮 -->
+        <button 
+            @click="darkMode = !darkMode"
+            class="fixed top-4 right-4 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 z-50"
+        >
+            <svg x-show="!darkMode" class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+            <svg x-show="darkMode" class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+        </button>
+
+        <div class="w-full max-w-md">
+            <!-- Logo 和标题 -->
+            <div class="text-center mb-8 animate-float">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 shadow-2xl mb-4">
+                    <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-white dark:text-gray-100 mb-2">AI-CRM 系统</h1>
+                <p class="text-white/80 dark:text-gray-400">智能客户关系管理平台</p>
+            </div>
+
+            <!-- 登录卡片 -->
+            <div class="login-card rounded-2xl shadow-2xl p-8 border border-white/20 dark:border-gray-700"
+                 x-data="{ 
+                    username: '', 
+                    password: '', 
+                    remember: false,
+                    loading: false,
+                    error: '',
+                    login() {
+                        this.loading = true;
+                        this.error = '';
+                        
+                        // 模拟登录请求
+                        setTimeout(() => {
+                            if (this.username && this.password) {
+                                window.location.href = 'dashboard.html';
+                            } else {
+                                this.error = '请输入用户名和密码';
+                                this.loading = false;
+                            }
+                        }, 800);
+                    }
+                 }">
+                
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">登录账户</h2>
+                
+                <!-- 错误提示 -->
+                <div x-show="error" 
+                     x-transition
+                     class="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm">
+                    <span x-text="error"></span>
+                </div>
+
+                <form @submit.prevent="login" class="space-y-5">
+                    <!-- 用户名 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            用户名
+                        </label>
+                        <input 
+                            type="text" 
+                            x-model="username"
+                            placeholder="请输入用户名"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                            :disabled="loading"
+                        >
+                    </div>
+
+                    <!-- 密码 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            密码
+                        </label>
+                        <input 
+                            type="password" 
+                            x-model="password"
+                            placeholder="请输入密码"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                            :disabled="loading"
+                        >
+                    </div>
+
+                    <!-- 记住我 -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                x-model="remember"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                :disabled="loading"
+                            >
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">记住我</span>
+                        </label>
+                        <a href="#" class="text-sm text-primary hover:text-primary/80 transition-colors">
+                            忘记密码？
+                        </a>
+                    </div>
+
+                    <!-- 登录按钮 -->
+                    <button 
+                        type="submit"
+                        :disabled="loading"
+                        class="w-full py-3 px-4 bg-primary hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                        <span x-show="!loading">登录</span>
+                        <span x-show="loading" class="flex items-center justify-center">
+                            <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            登录中...
+                        </span>
+                    </button>
+                </form>
+
+                <!-- 提示信息 -->
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <p class="text-xs text-center text-gray-500 dark:text-gray-400">
+                        💡 预览模式：输入任意用户名和密码即可登录
+                    </p>
+                    <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-2">
+                        默认账户：admin / admin123
+                    </p>
+                </div>
+            </div>
+
+            <!-- 底部版权 -->
+            <p class="text-center text-white/60 dark:text-gray-400 text-sm mt-8">
+                © 2024 AI-CRM. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
