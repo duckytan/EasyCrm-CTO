@@ -1,322 +1,219 @@
 <!DOCTYPE html>
-<html lang="zh-CN" x-data="layoutState()" x-init="init()">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>预设数据管理 - AI-CRM 系统</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="assets/layout.js"></script>
-    <script defer src="assets/mobile-helpers.js"></script>
-    <script defer src="assets/apply-mobile-optimizations.js"></script>
-    <link rel="stylesheet" href="assets/mobile-optimizations.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#2563EB',
-                        secondary: '#10B981',
-                        accent: '#F97316',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
-        body { font-family: 'Noto Sans SC', 'PingFang SC', 'Inter', system-ui, sans-serif; }
-        [x-cloak] { display: none !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <title>预设数据管理 - AI-CRM 系统</title>
+  <link rel="stylesheet" href="css/base.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+  <script defer src="js/app.js"></script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200" :class="{ 'dark': darkMode }" @keydown.window.escape="closeSidebar()">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Mobile Overlay -->
-        <div 
-            x-show="sidebarOpen && isMobile"
-            x-cloak
-            @click="closeSidebar()"
-            x-transition:enter="transition-opacity duration-200"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition-opacity duration-200"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-black/50 z-40 lg:hidden"
-        ></div>
+<body x-data="themeManager()" x-init="init()">
+  <div class="app-shell">
+    <nav class="primary-nav">
+      <a href="dashboard.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span>仪表盘</span>
+      </a>
+      <a href="customers.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span>客户</span>
+      </a>
+      <a href="visits.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span>回访</span>
+      </a>
+      <a href="products.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+        <span>订单</span>
+      </a>
+      <a href="presets.html" class="is-active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 8V6a2 2 0 00-2-2h-3l-2-2h-4l-2 2H5a2 2 0 00-2 2v2"/>
+          <rect x="3" y="8" width="18" height="12" rx="2" ry="2"/>
+        </svg>
+        <span>预设</span>
+      </a>
+      <a href="settings.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v6m0 6v6m-6-6h6m6 0h6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/>
+        </svg>
+        <span>设置</span>
+      </a>
+    </nav>
 
-        <!-- 侧边栏 -->
-        <aside x-show="sidebarOpen" @click.outside="closeSidebar()" x-transition class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-shrink-0 overflow-y-auto">
-            <div class="p-6">
-                <div class="flex items-center mb-8">
-                    <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="ml-3 text-xl font-bold text-gray-800 dark:text-white">AI-CRM</span>
-                </div>
-                <nav class="space-y-1 text-sm font-medium">
-                    <a href="dashboard.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                        </svg>
-                        仪表盘
-                    </a>
-                    <a href="customers.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        客户管理
-                    </a>
-                    <a href="visits.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        回访记录
-                    </a>
-                    <a href="products.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                        </svg>
-                        产品订单
-                    </a>
-                    <a href="presets.html" class="flex items-center px-4 py-3 rounded-lg bg-primary text-white shadow-sm">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-                        </svg>
-                        预设数据
-                    </a>
-                    <a href="settings.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        系统设置
-                    </a>
-                </nav>
-            </div>
-        </aside>
-
-        <!-- 主内容区 -->
-        <div class="flex-1 flex flex-col overflow-hidden" x-data="{ activeTab: 'customerCategories' }">
-            <!-- 顶部导航栏 -->
-            <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <button @click="toggleSidebar()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        </button>
-                        <div>
-                            <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">预设数据管理</h1>
-                            <p class="hidden sm:block text-sm text-gray-500 dark:text-gray-400">统一管理 CRM 所有下拉选项和系统预设数据</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 sm:gap-3">
-                        <button @click="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <svg x-show="!darkMode" class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                            </svg>
-                            <svg x-show="darkMode" class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </button>
-                        <button class="hidden sm:inline-flex px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">导出全部</button>
-                        <button class="inline-flex items-center px-3 sm:px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow hover:bg-blue-600 transition">
-                            <svg class="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            <span class="hidden sm:inline">新建预设项</span>
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <main class="flex-1 overflow-hidden flex">
-                <!-- 左侧类别列表 -->
-                <aside class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto py-6 px-4 space-y-2">
-                    <button @click="activeTab = 'customerCategories'" :class="activeTab === 'customerCategories' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        客户分类
-                        <span class="text-xs" :class="activeTab === 'customerCategories' ? 'text-white/80' : 'text-gray-400'">4</span>
-                    </button>
-                    <button @click="activeTab = 'intentions'" :class="activeTab === 'intentions' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        客户意向
-                        <span class="text-xs" :class="activeTab === 'intentions' ? 'text-white/80' : 'text-gray-400'">5</span>
-                    </button>
-                    <button @click="activeTab = 'regions'" :class="activeTab === 'regions' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        地区
-                        <span class="text-xs" :class="activeTab === 'regions' ? 'text-white/80' : 'text-gray-400'">8</span>
-                    </button>
-                    <button @click="activeTab = 'budgetRanges'" :class="activeTab === 'budgetRanges' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        预算范围
-                        <span class="text-xs" :class="activeTab === 'budgetRanges' ? 'text-white/80' : 'text-gray-400'">6</span>
-                    </button>
-                    <button @click="activeTab = 'superiorContacts'" :class="activeTab === 'superiorContacts' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        上级联系人
-                        <span class="text-xs" :class="activeTab === 'superiorContacts' ? 'text-white/80' : 'text-gray-400'">5</span>
-                    </button>
-                    <button @click="activeTab = 'visitMethods'" :class="activeTab === 'visitMethods' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        回访方式
-                        <span class="text-xs" :class="activeTab === 'visitMethods' ? 'text-white/80' : 'text-gray-400'">3</span>
-                    </button>
-                    <button @click="activeTab = 'visitTypes'" :class="activeTab === 'visitTypes' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        回访类型
-                        <span class="text-xs" :class="activeTab === 'visitTypes' ? 'text-white/80' : 'text-gray-400'">3</span>
-                    </button>
-                    <button @click="activeTab = 'navigationModes'" :class="activeTab === 'navigationModes' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        导航模式
-                        <span class="text-xs" :class="activeTab === 'navigationModes' ? 'text-white/80' : 'text-gray-400'">4</span>
-                    </button>
-                    <button @click="activeTab = 'reminderCycles'" :class="activeTab === 'reminderCycles' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        提醒周期
-                        <span class="text-xs" :class="activeTab === 'reminderCycles' ? 'text-white/80' : 'text-gray-400'">5</span>
-                    </button>
-                    <button @click="activeTab = 'presetProducts'" :class="activeTab === 'presetProducts' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'" class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium transition">
-                        预设产品
-                        <span class="text-xs" :class="activeTab === 'presetProducts' ? 'text-white/80' : 'text-gray-400'">6</span>
-                    </button>
-                </aside>
-
-                <!-- 右侧数据列表 -->
-                <section class="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-gray-900">
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
-                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-900 dark:text-white" x-text="{
-                                    customerCategories: '客户分类',
-                                    intentions: '客户意向等级',
-                                    regions: '地区',
-                                    budgetRanges: '预算范围',
-                                    superiorContacts: '上级联系人',
-                                    visitMethods: '回访方式',
-                                    visitTypes: '回访类型',
-                                    navigationModes: '导航模式',
-                                    reminderCycles: '提醒周期',
-                                    presetProducts: '预设产品'
-                                }[activeTab]"></h2>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">支持拖拽排序与批量编辑</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">重新排序</button>
-                                <button class="px-3 py-2 rounded-lg bg-primary/10 text-primary text-sm hover:bg-primary/20">新增</button>
-                            </div>
-                        </div>
-
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead class="bg-gray-50 dark:bg-gray-900">
-                                    <tr class="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                        <th class="px-6 py-3">名称</th>
-                                        <th class="px-6 py-3">描述</th>
-                                        <th class="px-6 py-3">显示顺序</th>
-                                        <th class="px-6 py-3">状态</th>
-                                        <th class="px-6 py-3 text-right">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700 text-gray-700 dark:text-gray-300">
-                                    <!-- 示例数据 -->
-                                    <template x-if="activeTab === 'customerCategories'">
-                                        <>
-                                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">VIP 客户</td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">重要合作伙伴，享受定制服务</td>
-                                                <td class="px-6 py-4">1</td>
-                                                <td class="px-6 py-4">
-                                                    <span class="inline-flex px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">启用</span>
-                                                </td>
-                                                <td class="px-6 py-4 text-right">
-                                                    <button class="text-primary hover:text-primary/80">编辑</button>
-                                                    <button class="ml-3 text-red-500 hover:text-red-600">删除</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">重点跟进</td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">高潜力客户，需要密切跟进</td>
-                                                <td class="px-6 py-4">2</td>
-                                                <td class="px-6 py-4">
-                                                    <span class="inline-flex px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">启用</span>
-                                                </td>
-                                                <td class="px-6 py-4 text-right">
-                                                    <button class="text-primary hover:text-primary/80">编辑</button>
-                                                    <button class="ml-3 text-red-500 hover:text-red-600">删除</button>
-                                                </td>
-                                            </tr>
-                                        </>
-                                    </template>
-
-                                    <template x-if="activeTab === 'intentions'">
-                                        <>
-                                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">A级 - 高意向</td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">已明确采购需求，需快速推进</td>
-                                                <td class="px-6 py-4">1</td>
-                                                <td class="px-6 py-4">
-                                                    <span class="inline-flex px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">启用</span>
-                                                </td>
-                                                <td class="px-6 py-4 text-right">
-                                                    <button class="text-primary hover:text-primary/80">编辑</button>
-                                                    <button class="ml-3 text-red-500 hover:text-red-600">删除</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">H级 - 已成交</td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">已完成签约，进入维系阶段</td>
-                                                <td class="px-6 py-4">5</td>
-                                                <td class="px-6 py-4">
-                                                    <span class="inline-flex px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">维系</span>
-                                                </td>
-                                                <td class="px-6 py-4 text-right">
-                                                    <button class="text-primary hover:text-primary/80">编辑</button>
-                                                    <button class="ml-3 text-red-500 hover:text-red-600">删除</button>
-                                                </td>
-                                            </tr>
-                                        </>
-                                    </template>
-
-                                    <template x-if="activeTab === 'presetProducts'">
-                                        <>
-                                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">AI-CRM 企业版</td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">支持多部门协作与高级权限控制</td>
-                                                <td class="px-6 py-4">1</td>
-                                                <td class="px-6 py-4">
-                                                    <span class="inline-flex px-2 py-1 text-xs rounded-full bg-lime-100 dark:bg-lime-900 text-lime-700 dark:text-lime-300">热销</span>
-                                                </td>
-                                                <td class="px-6 py-4 text-right">
-                                                    <button class="text-primary hover:text-primary/80">编辑</button>
-                                                    <button class="ml-3 text-red-500 hover:text-red-600">删除</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="hover-bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">智能提醒模块</td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">AI 自动推送回访、生日、跟进提醒</td>
-                                                <td class="px-6 py-4">2</td>
-                                                <td class="px-6 py-4">
-                                                    <span class="inline-flex px-2 py-1 text-xs rounded-full bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300">推荐</span>
-                                                </td>
-                                                <td class="px-6 py-4 text-right">
-                                                    <button class="text-primary hover:text-primary/80">编辑</button>
-                                                    <button class="ml-3 text-red-500 hover:text-red-600">删除</button>
-                                                </td>
-                                            </tr>
-                                        </>
-                                    </template>
-
-                                    <!-- 其余类别可类似追加示例 -->
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
-                            提示：删除数据前将进行引用检查，防止影响业务数据。一旦删除无法恢复，请谨慎操作。
-                        </div>
-                    </div>
-                </section>
-            </main>
+    <div class="content-area">
+      <header class="top-bar">
+        <h1 class="top-bar__title">预设数据</h1>
+        <div class="top-bar__actions">
+          <button class="theme-toggle" @click="toggle()" type="button">
+            <svg x-show="theme === 'light'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg x-show="theme === 'dark'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </button>
         </div>
+      </header>
+
+      <main class="page-content" x-data="{
+        categories: mockData.presetCategories,
+        activeCategory: 'customer-categories',
+        data: mockData.customerCategories,
+        get currentCategory() {
+          return this.categories.find(c => c.id === this.activeCategory);
+        }
+      }">
+        <section class="section">
+          <p style="color: var(--color-text-muted); margin-bottom: 20px;">
+            管理系统中的各类预设选项，便于快速录入和统一规范
+          </p>
+
+          <!-- 分类切换 -->
+          <div class="card" style="padding: 16px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <template x-for="cat in categories" :key="cat.id">
+                <button 
+                  class="btn"
+                  :class="activeCategory === cat.id ? '' : 'btn-ghost'"
+                  @click="activeCategory = cat.id"
+                  style="padding: 10px 16px; font-size: 0.85rem;"
+                >
+                  <span x-text="cat.name"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+        </section>
+
+        <!-- 当前数据展示 -->
+        <section class="section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+            <h2 class="section-title" style="margin: 0;" x-text="currentCategory.name"></h2>
+            <button class="btn" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('添加功能待实现', 'info')">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              新增
+            </button>
+          </div>
+
+          <!-- 客户分类 -->
+          <div x-show="activeCategory === 'customer-categories'" x-transition>
+            <div class="list">
+              <template x-for="item in data" :key="item.id">
+                <div class="card">
+                  <div class="list-item" style="align-items: center;">
+                    <div style="flex: 1;">
+                      <div class="list-item__primary" x-text="item.name"></div>
+                      <div class="list-item__meta" x-text="item.description"></div>
+                    </div>
+                    <div class="inline-actions">
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      <button class="btn btn-ghost" style="padding: 8px 14px; font-size: 0.8rem; color: #ef4444;" @click="if(confirm('确认删除？')) { showToast('已删除', 'success'); }">删除</button>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- 其他分类 -->
+          <div x-show="activeCategory === 'customer-intentions'" x-transition>
+            <div class="card">
+              <div class="empty-state">
+                <p>此分类下暂无数据</p>
+                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="activeCategory === 'regions'" x-transition>
+            <div class="card">
+              <div class="empty-state">
+                <p>此分类下暂无数据</p>
+                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="activeCategory === 'budget-ranges'" x-transition>
+            <div class="card">
+              <div class="empty-state">
+                <p>此分类下暂无数据</p>
+                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="activeCategory === 'visit-methods'" x-transition>
+            <div class="card">
+              <div class="empty-state">
+                <p>此分类下暂无数据</p>
+                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="activeCategory === 'visit-types'" x-transition>
+            <div class="card">
+              <div class="empty-state">
+                <p>此分类下暂无数据</p>
+                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="activeCategory === 'preset-products'" x-transition>
+            <div class="card">
+              <div class="empty-state">
+                <p>此分类下暂无数据</p>
+                <button class="btn" style="margin-top: 16px;" @click="showToast('添加功能待实现', 'info')">立即添加</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 使用说明 -->
+        <section class="section">
+          <div class="card" style="background: rgba(37, 99, 235, 0.06); border-color: rgba(37, 99, 235, 0.2);">
+            <div style="display: flex; gap: 12px;">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: var(--color-primary);">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4"/>
+                <path d="M12 8h.01"/>
+              </svg>
+              <div style="flex: 1;">
+                <h3 style="margin: 0 0 8px; font-weight: 600;">使用提示</h3>
+                <p style="margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--color-text-muted);">
+                  预设数据用于客户、回访、订单等模块的快速选择，建议根据实际业务需求定期维护。数据支持拖拽排序，可调整显示顺序。
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
+  </div>
 </body>
 </html>

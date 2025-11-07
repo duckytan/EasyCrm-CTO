@@ -1,0 +1,14 @@
+# 本地测试文件
+*.test.html
+*.tmp
+
+# 编辑器配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 日志文件
+*.log

@@ -1,8 +1,11 @@
 #!/bin/bash
 
-echo "🎨 启动 AI-CRM 前端预览服务器（移动优先版）..."
+# AI-CRM 前端预览启动脚本
+
+echo "🎨 启动 AI-CRM 前端预览服务器..."
 echo ""
 
+# 检查 Python3
 if command -v python3 &> /dev/null; then
     echo "✓ 使用 Python3 启动服务器"
     echo "📱 在浏览器中访问: http://localhost:8080"

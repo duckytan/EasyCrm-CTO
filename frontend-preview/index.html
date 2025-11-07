@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <title>登录 - AI-CRM 系统</title>
+  <link rel="stylesheet" href="css/base.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <div class="login-shell" x-data="themeManager()" x-init="init()">
+    <div class="dark-toggle">
+      <button class="theme-toggle" @click="toggle()" type="button">
+        <svg x-show="theme === 'light'" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <svg x-show="theme === 'dark'" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="login-card" x-data="{ username: '', password: '', remember: false, error: '', loading: false }">
+      <div class="login-card__header">
+        <div class="login-logo">AI</div>
+        <h1 class="login-title">AI-CRM 系统</h1>
+        <p class="login-subtitle">智能客户关系管理平台</p>
+      </div>
+
+      <form class="login-form" @submit.prevent="
+        loading = true;
+        error = '';
+        setTimeout(() => {
+          if (!username || !password) {
+            error = '请输入用户名和密码';
+            loading = false;
+          } else {
+            window.location.href = 'dashboard.html';
+          }
+        }, 500);
+      ">
+        <div x-show="error" x-transition class="tag tag-warning" style="width: 100%; justify-content: center;">
+          <span x-text="error"></span>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="username">用户名</label>
+          <input 
+            id="username"
+            type="text" 
+            class="input" 
+            placeholder="请输入用户名" 
+            x-model="username"
+            :disabled="loading"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="password">密码</label>
+          <input 
+            id="password"
+            type="password" 
+            class="input" 
+            placeholder="请输入密码" 
+            x-model="password"
+            :disabled="loading"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <div class="form-action">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" x-model="remember" style="width: 16px; height: 16px;">
+            <span>记住我</span>
+          </label>
+          <a href="#" style="color: var(--color-primary); font-weight: 600;">忘记密码？</a>
+        </div>
+
+        <button type="submit" class="btn" :disabled="loading">
+          <span x-show="!loading">登录</span>
+          <span x-show="loading">登录中...</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p style="margin-bottom: 8px;">💡 预览模式：输入任意用户名和密码即可登录</p>
+        <p>默认账户：admin / admin123</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
