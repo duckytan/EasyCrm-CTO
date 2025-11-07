@@ -1,255 +1,328 @@
 <!DOCTYPE html>
-<html lang="zh-CN" x-data="layoutState()" x-init="init()">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>系统设置 - AI-CRM 系统</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="assets/layout.js"></script>
-    <script defer src="assets/mobile-helpers.js"></script>
-    <script defer src="assets/apply-mobile-optimizations.js"></script>
-    <link rel="stylesheet" href="assets/mobile-optimizations.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#2563EB',
-                        secondary: '#10B981',
-                        accent: '#F97316',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
-        body { font-family: 'Noto Sans SC', 'PingFang SC', 'Inter', system-ui, sans-serif; }
-        [x-cloak] { display: none !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <title>系统设置 - AI-CRM 系统</title>
+  <link rel="stylesheet" href="css/base.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+  <script defer src="js/app.js"></script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200" :class="{ 'dark': darkMode }" @keydown.window.escape="closeSidebar()">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Mobile Overlay -->
-        <div 
-            x-show="sidebarOpen && isMobile"
-            x-cloak
-            @click="closeSidebar()"
-            x-transition:enter="transition-opacity duration-200"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition-opacity duration-200"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-black/50 z-40 lg:hidden"
-        ></div>
+<body x-data="themeManager()" x-init="init()">
+  <div class="app-shell">
+    <nav class="primary-nav">
+      <a href="dashboard.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span>仪表盘</span>
+      </a>
+      <a href="customers.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span>客户</span>
+      </a>
+      <a href="visits.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span>回访</span>
+      </a>
+      <a href="products.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+        <span>订单</span>
+      </a>
+      <a href="presets.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 8V6a2 2 0 00-2-2h-3l-2-2h-4l-2 2H5a2 2 0 00-2 2v2"/>
+          <rect x="3" y="8" width="18" height="12" rx="2" ry="2"/>
+        </svg>
+        <span>预设</span>
+      </a>
+      <a href="settings.html" class="is-active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v6m0 6v6m-6-6h6m6 0h6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/>
+        </svg>
+        <span>设置</span>
+      </a>
+    </nav>
 
-        <!-- 侧边栏 -->
-        <aside x-show="sidebarOpen" @click.outside="closeSidebar()" x-transition class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-shrink-0 overflow-y-auto">
-            <div class="p-6">
-                <div class="flex items-center mb-8">
-                    <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="ml-3 text-xl font-bold text-gray-800 dark:text-white">AI-CRM</span>
-                </div>
-                <nav class="space-y-1 text-sm font-medium">
-                    <a href="dashboard.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                        </svg>
-                        仪表盘
-                    </a>
-                    <a href="customers.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        客户管理
-                    </a>
-                    <a href="visits.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        回访记录
-                    </a>
-                    <a href="products.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                        </svg>
-                        产品订单
-                    </a>
-                    <a href="presets.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-                        </svg>
-                        预设数据
-                    </a>
-                    <a href="settings.html" class="flex items-center px-4 py-3 rounded-lg bg-primary text-white shadow-sm">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        系统设置
-                    </a>
-                </nav>
-            </div>
-        </aside>
-
-        <!-- 主内容区 -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- 顶部导航栏 -->
-            <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <button @click="toggleSidebar()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        </button>
-                        <div>
-                            <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">系统设置</h1>
-                            <p class="hidden sm:block text-sm text-gray-500 dark:text-gray-400">配置个人偏好、账户安全与数据管理</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 sm:gap-3">
-                        <button @click="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <svg x-show="!darkMode" class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                            </svg>
-                            <svg x-show="darkMode" class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-                <!-- 账户信息 -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">账户信息</h2>
-                    <div class="flex items-center gap-6">
-                        <div class="w-20 h-20 rounded-full bg-primary text-white text-3xl flex items-center justify-center font-semibold">A</div>
-                        <div class="flex-1">
-                            <p class="text-xl font-semibold text-gray-900 dark:text-white">Admin</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">admin@ai-crm.com</p>
-                            <p class="text-xs text-gray-400 mt-2">上次登录：2024-12-17 14:30</p>
-                        </div>
-                        <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">编辑资料</button>
-                    </div>
-                </div>
-
-                <!-- 外观设置 -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">外观设置</h2>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="font-medium text-gray-900 dark:text-white">深色模式</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">切换深色或浅色主题</p>
-                            </div>
-                            <button @click="toggleDarkMode()" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
-                                    :class="darkMode ? 'bg-primary' : 'bg-gray-200'">
-                                <span class="inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                                      :class="darkMode ? 'translate-x-5' : 'translate-x-0'"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 通知设置 -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">通知设置</h2>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="font-medium text-gray-900 dark:text-white">回访提醒</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">接收客户回访提醒通知</p>
-                            </div>
-                            <button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors">
-                                <span class="inline-block h-5 w-5 transform rounded-full bg-white shadow translate-x-5"></span>
-                            </button>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="font-medium text-gray-900 dark:text-white">生日提醒</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">接收客户生日提醒通知</p>
-                            </div>
-                            <button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors">
-                                <span class="inline-block h-5 w-5 transform rounded-full bg-white shadow translate-x-5"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 密码安全 -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">密码安全</h2>
-                    <div class="space-y-4 max-w-xl">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">原密码</label>
-                            <input type="password" class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white" placeholder="请输入原密码">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">新密码</label>
-                            <input type="password" class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white" placeholder="请输入新密码">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">确认新密码</label>
-                            <input type="password" class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white" placeholder="请再次输入新密码">
-                        </div>
-                        <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-blue-600 transition">更新密码</button>
-                    </div>
-                </div>
-
-                <!-- 数据管理 -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">数据管理</h2>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                            <div>
-                                <p class="font-medium text-gray-900 dark:text-white">数据备份</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">导出所有数据用于备份</p>
-                            </div>
-                            <button class="px-4 py-2 rounded-lg bg-secondary text-white hover:bg-green-600 transition">创建备份</button>
-                        </div>
-                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                            <div>
-                                <p class="font-medium text-gray-900 dark:text-white">数据恢复</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">从备份文件恢复数据</p>
-                            </div>
-                            <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">选择备份</button>
-                        </div>
-                        <div class="flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-                            <div>
-                                <p class="font-medium text-red-700 dark:text-red-400">清空数据</p>
-                                <p class="text-sm text-red-600 dark:text-red-500">⚠️ 此操作将清空所有业务数据，不可恢复！</p>
-                            </div>
-                            <button class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">清空</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 关于系统 -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">关于系统</h2>
-                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                        <p><span class="font-medium text-gray-900 dark:text-white">系统版本：</span>AI-CRM v1.0.0</p>
-                        <p><span class="font-medium text-gray-900 dark:text-white">更新日期：</span>2024-12-17</p>
-                        <p><span class="font-medium text-gray-900 dark:text-white">技术支持：</span>contact@ai-crm.com</p>
-                        <div class="pt-4 flex gap-3">
-                            <a href="#" class="text-primary hover:text-primary/80">使用手册</a>
-                            <a href="#" class="text-primary hover:text-primary/80">API文档</a>
-                            <a href="#" class="text-primary hover:text-primary/80">问题反馈</a>
-                        </div>
-                    </div>
-                </div>
-            </main>
+    <div class="content-area">
+      <header class="top-bar">
+        <h1 class="top-bar__title">系统设置</h1>
+        <div class="top-bar__actions">
+          <button class="theme-toggle" @click="toggle()" type="button">
+            <svg x-show="theme === 'light'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg x-show="theme === 'dark'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </button>
         </div>
+      </header>
+
+      <main class="page-content" x-data="{
+        visitReminder: true,
+        birthdayReminder: true,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      }">
+        <!-- 账户信息 -->
+        <section class="section">
+          <h2 class="section-title">账户信息</h2>
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div class="avatar" style="width: 56px; height: 56px; font-size: 1.3rem;">AM</div>
+              <div>
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">admin</h3>
+                <p style="margin: 4px 0 0; font-size: 0.85rem; color: var(--color-text-muted);">管理员账户</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 外观设置 -->
+        <section class="section">
+          <h2 class="section-title">外观设置</h2>
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 600; margin-bottom: 4px;">深色模式</div>
+                <div style="font-size: 0.85rem; color: var(--color-text-muted);">切换深色/浅色主题</div>
+              </div>
+              <label style="position: relative; display: inline-block; width: 52px; height: 28px;">
+                <input 
+                  type="checkbox" 
+                  :checked="theme === 'dark'" 
+                  @change="toggle()"
+                  style="opacity: 0; width: 0; height: 0;"
+                >
+                <span style="position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 28px; transition: 0.3s;">
+                  <span 
+                    style="position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.3s;"
+                    :style="theme === 'dark' ? 'transform: translateX(24px); background-color: #2563eb;' : ''"
+                  ></span>
+                </span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- 通知设置 -->
+        <section class="section">
+          <h2 class="section-title">通知设置</h2>
+          <div class="card" style="display: flex; flex-direction: column; gap: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 600; margin-bottom: 4px;">回访提醒</div>
+                <div style="font-size: 0.85rem; color: var(--color-text-muted);">到期回访自动提醒</div>
+              </div>
+              <label style="position: relative; display: inline-block; width: 52px; height: 28px;">
+                <input 
+                  type="checkbox" 
+                  x-model="visitReminder"
+                  style="opacity: 0; width: 0; height: 0;"
+                >
+                <span style="position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 28px; transition: 0.3s;" :style="visitReminder ? 'background-color: #10b981;' : ''">
+                  <span 
+                    style="position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.3s;"
+                    :style="visitReminder ? 'transform: translateX(24px);' : ''"
+                  ></span>
+                </span>
+              </label>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 600; margin-bottom: 4px;">生日提醒</div>
+                <div style="font-size: 0.85rem; color: var(--color-text-muted);">客户生日自动提醒</div>
+              </div>
+              <label style="position: relative; display: inline-block; width: 52px; height: 28px;">
+                <input 
+                  type="checkbox" 
+                  x-model="birthdayReminder"
+                  style="opacity: 0; width: 0; height: 0;"
+                >
+                <span style="position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 28px; transition: 0.3s;" :style="birthdayReminder ? 'background-color: #10b981;' : ''">
+                  <span 
+                    style="position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.3s;"
+                    :style="birthdayReminder ? 'transform: translateX(24px);' : ''"
+                  ></span>
+                </span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- 修改密码 -->
+        <section class="section">
+          <h2 class="section-title">安全设置</h2>
+          <div class="card">
+            <form @submit.prevent="showToast('密码修改成功', 'success'); currentPassword = ''; newPassword = ''; confirmPassword = '';">
+              <div class="field">
+                <label class="field-label" for="current-pass">当前密码</label>
+                <input 
+                  id="current-pass"
+                  type="password" 
+                  class="input" 
+                  placeholder="请输入当前密码" 
+                  x-model="currentPassword"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label class="field-label" for="new-pass">新密码</label>
+                <input 
+                  id="new-pass"
+                  type="password" 
+                  class="input" 
+                  placeholder="请输入新密码（至少8位）" 
+                  x-model="newPassword"
+                  minlength="8"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label class="field-label" for="confirm-pass">确认密码</label>
+                <input 
+                  id="confirm-pass"
+                  type="password" 
+                  class="input" 
+                  placeholder="请再次输入新密码" 
+                  x-model="confirmPassword"
+                  required
+                >
+              </div>
+
+              <button type="submit" class="btn" style="margin-top: 20px;">更新密码</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- 数据管理 -->
+        <section class="section">
+          <h2 class="section-title">数据管理</h2>
+          <div class="card" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div style="font-weight: 600; margin-bottom: 4px;">数据备份</div>
+                <div style="font-size: 0.85rem; color: var(--color-text-muted);">备份客户、回访和订单数据</div>
+              </div>
+              <button class="btn btn-secondary" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('数据备份已创建', 'success')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                创建备份
+              </button>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div style="font-weight: 600; margin-bottom: 4px;">恢复数据</div>
+                <div style="font-size: 0.85rem; color: var(--color-text-muted);">从备份文件恢复数据</div>
+              </div>
+              <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.875rem;" @click="if(confirm('确认恢复数据？此操作将覆盖现有数据')) { showToast('数据恢复完成', 'success'); }">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                </svg>
+                恢复数据
+              </button>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div style="font-weight: 600; margin-bottom: 4px; color: #ef4444;">清空数据</div>
+                <div style="font-size: 0.85rem; color: var(--color-text-muted);">删除所有业务数据（不可恢复）</div>
+              </div>
+              <button 
+                class="btn" 
+                style="padding: 10px 16px; font-size: 0.875rem; background: #ef4444;" 
+                @click="if(confirm('警告：此操作将删除所有客户、回访和订单数据，且不可恢复！\n\n确认继续？')) { if(confirm('请再次确认：确定要清空所有数据吗？')) { showToast('数据已清空', 'success'); } }"
+              >
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                </svg>
+                清空数据
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 预设数据管理 -->
+        <section class="section">
+          <h2 class="section-title">预设数据管理</h2>
+          <div class="card">
+            <p style="margin: 0 0 16px; color: var(--color-text-muted); font-size: 0.9rem;">
+              管理客户分类、意向等级、回访方式等预设选项
+            </p>
+            <a href="presets.html" class="btn btn-ghost" style="display: inline-flex; padding: 10px 16px; font-size: 0.875rem;">
+              前往管理
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </a>
+          </div>
+        </section>
+
+        <!-- 关于 -->
+        <section class="section">
+          <h2 class="section-title">关于系统</h2>
+          <div class="card">
+            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--color-text-muted);">系统版本</span>
+                <span style="font-weight: 600;">v2.0.0</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--color-text-muted);">发布日期</span>
+                <span style="font-weight: 600;">2024-11-07</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--color-text-muted);">技术栈</span>
+                <span style="font-weight: 600;">Alpine.js + Tailwind CSS</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 退出登录 -->
+        <section class="section">
+          <button 
+            class="btn btn-ghost" 
+            style="width: 100%; border: 1px solid var(--color-border);"
+            @click="if(confirm('确认退出登录？')) { window.location.href = 'index.html'; }"
+          >
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            退出登录
+          </button>
+        </section>
+      </main>
     </div>
+  </div>
 </body>
 </html>

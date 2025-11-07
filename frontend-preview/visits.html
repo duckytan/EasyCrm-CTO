@@ -1,377 +1,178 @@
 <!DOCTYPE html>
-<html lang="zh-CN" x-data="layoutState()" x-init="init()">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>回访记录 - AI-CRM 系统</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="assets/layout.js"></script>
-    <script defer src="assets/mobile-helpers.js"></script>
-    <script defer src="assets/apply-mobile-optimizations.js"></script>
-    <link rel="stylesheet" href="assets/mobile-optimizations.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#2563EB',
-                        secondary: '#10B981',
-                        accent: '#F97316',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
-        body { font-family: 'Noto Sans SC', 'PingFang SC', 'Inter', system-ui, sans-serif; }
-        [x-cloak] { display: none !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <title>回访记录 - AI-CRM 系统</title>
+  <link rel="stylesheet" href="css/base.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+  <script defer src="js/app.js"></script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200" :class="{ 'dark': darkMode }" @keydown.window.escape="closeSidebar()">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Mobile Overlay -->
-        <div 
-            x-show="sidebarOpen && isMobile"
-            x-cloak
-            @click="closeSidebar()"
-            x-transition:enter="transition-opacity duration-200"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition-opacity duration-200"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-black/50 z-40 lg:hidden"
-        ></div>
-
-        <!-- 侧边栏 -->
-        <aside x-show="sidebarOpen" @click.outside="closeSidebar()" x-transition class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-shrink-0 overflow-y-auto">
-            <div class="p-6">
-                <div class="flex items-center mb-8">
-                    <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="ml-3 text-xl font-bold text-gray-800 dark:text-white">AI-CRM</span>
-                </div>
-                <nav class="space-y-1 text-sm font-medium">
-                    <a href="dashboard.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                        </svg>
-                        仪表盘
-                    </a>
-                    <a href="customers.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        客户管理
-                    </a>
-                    <a href="visits.html" class="flex items-center px-4 py-3 rounded-lg bg-primary text-white shadow-sm">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        回访记录
-                    </a>
-                    <a href="products.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                        </svg>
-                        产品订单
-                    </a>
-                    <a href="presets.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-                        </svg>
-                        预设数据
-                    </a>
-                    <a href="settings.html" class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        系统设置
-                    </a>
-                </nav>
-            </div>
-        </aside>
-
-        <!-- 主内容 -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- 顶部 -->
-            <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <button @click="toggleSidebar()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        </button>
-                        <div>
-                            <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">回访记录</h1>
-                            <p class="hidden sm:block text-sm text-gray-500 dark:text-gray-400">客户回访历史记录与跟进计划</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 sm:gap-3">
-                        <button @click="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <svg x-show="!darkMode" class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                            </svg>
-                            <svg x-show="darkMode" class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </button>
-                        <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-medium">A</div>
-                    </div>
-                </div>
-            </header>
-
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-                <!-- 筛选工具栏 -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-4 sm:p-6 filter-section">
-                    <button class="filter-collapse-toggle lg:hidden">
-                        <span>筛选回访记录</span>
-                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="filter-content expanded lg:mt-0 lg:max-h-none lg:overflow-visible">
-                        <div class="flex flex-col lg:flex-row lg:items-center gap-4 mt-4 lg:mt-0">
-                            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <select class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm">
-                                    <option>客户：全部</option>
-                                    <option>张三</option>
-                                    <option>李四</option>
-                                    <option>王五</option>
-                                </select>
-                                <select class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm">
-                                    <option>回访方式：全部</option>
-                                    <option>电话沟通</option>
-                                    <option>微信沟通</option>
-                                    <option>上门拜访</option>
-                                </select>
-                                <select class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm">
-                                    <option>回访类型：全部</option>
-                                    <option>初次拜访</option>
-                                    <option>跟进回访</option>
-                                    <option>成交回访</option>
-                                </select>
-                                <input type="date" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm">
-                            </div>
-                            <div class="flex flex-wrap justify-end gap-2">
-                                <button type="button" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">导出</button>
-                                <button type="button" class="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow hover:bg-blue-600 transition">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                    </svg>
-                                    新增回访
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 统计卡片 -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">总回访记录</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">1,458</p>
-                        </div>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">本月回访</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">215</p>
-                        </div>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">待回访客户</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">42</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 回访记录列表 -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50 dark:bg-gray-900">
-                                <tr class="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                    <th class="px-6 py-4">回访时间</th>
-                                    <th class="px-6 py-4">客户</th>
-                                    <th class="px-6 py-4">回访方式</th>
-                                    <th class="px-6 py-4">回访类型</th>
-                                    <th class="px-6 py-4">意向变化</th>
-                                    <th class="px-6 py-4">下次计划</th>
-                                    <th class="px-6 py-4 text-right">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700 text-gray-700 dark:text-gray-300">
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <p class="font-medium">2024-12-15 14:30</p>
-                                        <p class="text-xs text-gray-500">2天前</p>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">张</div>
-                                            <div>
-                                                <p class="font-medium">张三</p>
-                                                <p class="text-xs text-gray-500">ABC 科技</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
-                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                                            </svg>
-                                            电话沟通
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4">跟进回访</td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-2">
-                                            <span class="inline-flex px-2 py-1 text-xs rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300">B</span>
-                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                                            </svg>
-                                            <span class="inline-flex px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">A</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <p class="text-sm">2024-12-20</p>
-                                        <p class="text-xs text-gray-500">技术对接会议</p>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="inline-flex items-center gap-2">
-                                            <button class="text-primary hover:text-primary/80">详情</button>
-                                            <button class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">编辑</button>
-                                            <button class="text-red-500 hover:text-red-600">删除</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <p class="font-medium">2024-12-12 10:00</p>
-                                        <p class="text-xs text-gray-500">5天前</p>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-medium">李</div>
-                                            <div>
-                                                <p class="font-medium">李四</p>
-                                                <p class="text-xs text-gray-500">XYZ 制造</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
-                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                            </svg>
-                                            上门拜访
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4">初次拜访</td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex px-2 py-1 text-xs rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300">B</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <p class="text-sm">2024-12-19</p>
-                                        <p class="text-xs text-gray-500">提交技术方案</p>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="inline-flex items-center gap-2">
-                                            <button class="text-primary hover:text-primary/80">详情</button>
-                                            <button class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">编辑</button>
-                                            <button class="text-red-500 hover:text-red-600">删除</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <p class="font-medium">2024-12-08 16:00</p>
-                                        <p class="text-xs text-gray-500">9天前</p>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-medium">王</div>
-                                            <div>
-                                                <p class="font-medium">王五</p>
-                                                <p class="text-xs text-gray-500">明日集团</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
-                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                            </svg>
-                                            微信沟通
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4">成交回访</td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex px-2 py-1 text-xs rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">H</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <p class="text-sm">2024-12-22</p>
-                                        <p class="text-xs text-gray-500">产品使用培训</p>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="inline-flex items-center gap-2">
-                                            <button class="text-primary hover:text-primary/80">详情</button>
-                                            <button class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">编辑</button>
-                                            <button class="text-red-500 hover:text-red-600">删除</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- 分页 -->
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 text-sm">
-                        <p class="text-gray-500 dark:text-gray-400">共 1,458 条记录，每页 10 条</p>
-                        <div class="flex items-center gap-2">
-                            <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">上一页</button>
-                            <button class="px-3 py-2 rounded-lg bg-primary text-white">1</button>
-                            <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">2</button>
-                            <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">3</button>
-                            <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">下一页</button>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <!-- 浮动操作按钮 (FAB) -->
-    <button class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-white shadow-lg hover:shadow-xl hover:bg-blue-600 flex items-center justify-center transition-all duration-200 hover:scale-110">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+<body x-data="themeManager()" x-init="init()">
+  <div class="app-shell">
+    <nav class="primary-nav">
+      <a href="dashboard.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
         </svg>
-    </button>
+        <span>仪表盘</span>
+      </a>
+      <a href="customers.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span>客户</span>
+      </a>
+      <a href="visits.html" class="is-active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span>回访</span>
+      </a>
+      <a href="products.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+        <span>订单</span>
+      </a>
+      <a href="presets.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 8V6a2 2 0 00-2-2h-3l-2-2h-4l-2 2H5a2 2 0 00-2 2v2"/>
+          <rect x="3" y="8" width="18" height="12" rx="2" ry="2"/>
+        </svg>
+        <span>预设</span>
+      </a>
+      <a href="settings.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v6m0 6v6m-6-6h6m6 0h6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/>
+        </svg>
+        <span>设置</span>
+      </a>
+    </nav>
+
+    <div class="content-area">
+      <header class="top-bar">
+        <h1 class="top-bar__title">回访记录</h1>
+        <div class="top-bar__actions">
+          <button class="theme-toggle" @click="toggle()" type="button">
+            <svg x-show="theme === 'light'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg x-show="theme === 'dark'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </button>
+          <button class="btn" style="padding: 10px 16px; font-size: 0.875rem;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            新增回访
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content" x-data="{ 
+        visits: mockData.visits,
+        filterCustomer: '',
+        filterMethod: ''
+      }">
+        <section class="section">
+          <div class="grid-three">
+            <div class="card">
+              <div class="stat-label">本月回访</div>
+              <div class="stat-value">15</div>
+            </div>
+            <div class="card">
+              <div class="stat-label">平均满意度</div>
+              <div class="stat-value">96%</div>
+            </div>
+            <div class="card">
+              <div class="stat-label">待跟进</div>
+              <div class="stat-value">3</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="search-bar">
+            <input type="search" class="input" placeholder="搜索客户姓名" x-model="filterCustomer" style="flex: 2;">
+            <select class="select" x-model="filterMethod" style="flex: 1;">
+              <option value="">全部方式</option>
+              <option value="电话回访">电话回访</option>
+              <option value="现场拜访">现场拜访</option>
+              <option value="线上会议">线上会议</option>
+              <option value="邮件沟通">邮件沟通</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">回访列表</h2>
+          <template x-if="visits.length === 0">
+            <div class="empty-state">暂无回访记录</div>
+          </template>
+
+          <div class="timeline">
+            <template x-for="visit in visits" :key="visit.id">
+              <div class="timeline-item">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;">
+                  <div style="flex: 1; min-width: 0;">
+                    <a :href="`customer-detail.html?id=${visit.customerId}`" style="font-weight: 700; font-size: 1.05rem; color: var(--color-primary);" x-text="visit.customerName"></a>
+                    <div style="margin-top: 4px; color: var(--color-text-muted); font-size: 0.85rem;" x-text="visit.visitTime"></div>
+                  </div>
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <span class="tag" x-text="visit.method"></span>
+                    <span class="tag tag-warning" x-text="visit.type"></span>
+                  </div>
+                </div>
+
+                <div style="margin-top: 14px; padding: 12px 14px; background: var(--color-bg); border-radius: 12px;">
+                  <div class="info-label">回访内容</div>
+                  <p style="margin: 6px 0 0 0; line-height: 1.6;" x-text="visit.content"></p>
+                </div>
+
+                <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
+                  <div class="info-cell" style="flex: 1; min-width: 140px;">
+                    <div class="info-label">效果</div>
+                    <div class="info-value" x-text="visit.effect"></div>
+                  </div>
+                  <div class="info-cell" style="flex: 1; min-width: 140px;">
+                    <div class="info-label">满意度</div>
+                    <div class="info-value" x-text="visit.satisfaction"></div>
+                  </div>
+                  <div class="info-cell" style="flex: 1; min-width: 140px;">
+                    <div class="info-label">意向变化</div>
+                    <div class="info-value">
+                      <span x-text="visit.intentionPrev"></span>
+                      <svg style="display: inline; width: 14px; height: 14px; margin: 0 4px;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                      <span x-text="visit.intention"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 12px; font-size: 0.85rem; color: var(--color-text-muted);">
+                  下一步：<span x-text="visit.followUp"></span>
+                </div>
+              </div>
+            </template>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
 </body>
 </html>
