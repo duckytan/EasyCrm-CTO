@@ -36,13 +36,6 @@
         </svg>
         <span>订单</span>
       </a>
-      <a href="presets.html">
-        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 8V6a2 2 0 00-2-2h-3l-2-2h-4l-2 2H5a2 2 0 00-2 2v2"/>
-          <rect x="3" y="8" width="18" height="12" rx="2" ry="2"/>
-        </svg>
-        <span>预设</span>
-      </a>
       <a href="settings.html" class="is-active">
         <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
@@ -80,17 +73,37 @@
         birthdayReminder: true,
         currentPassword: '',
         newPassword: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        activePresetCategory: 'customer-categories',
+        presetCategories: mockData.presetCategories,
+        get currentPresetData() {
+          switch(this.activePresetCategory) {
+            case 'customer-categories': return mockData.customerCategories;
+            case 'customer-intentions': return mockData.customerIntentions;
+            case 'regions': return mockData.regions;
+            case 'budget-ranges': return mockData.budgetRanges;
+            case 'visit-methods': return mockData.visitMethods;
+            case 'visit-types': return mockData.visitTypes;
+            case 'preset-products': return mockData.presetProducts;
+            default: return [];
+          }
+        },
+        get currentPresetInfo() {
+          return this.presetCategories.find(c => c.id === this.activePresetCategory) || {};
+        }
       }">
         <!-- 账户信息 -->
         <section class="section">
           <h2 class="section-title">账户信息</h2>
           <div class="card">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <div class="avatar" style="width: 56px; height: 56px; font-size: 1.3rem;">AM</div>
-              <div>
-                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">admin</h3>
-                <p style="margin: 4px 0 0; font-size: 0.85rem; color: var(--color-text-muted);">管理员账户</p>
+              <div class="avatar" style="width: 64px; height: 64px; font-size: 1.4rem;">AM</div>
+              <div style="flex: 1;">
+                <h3 style="margin: 0; font-size: 1.2rem; font-weight: 600;">admin</h3>
+                <p style="margin: 6px 0 0; font-size: 0.9rem; color: var(--color-text-muted);">管理员账户</p>
+                <p style="margin: 6px 0 0; font-size: 0.85rem; color: var(--color-text-muted);">
+                  创建时间：2023-01-01  •  最后登录：2024-06-01
+                </p>
               </div>
             </div>
           </div>
@@ -100,21 +113,21 @@
         <section class="section">
           <h2 class="section-title">外观设置</h2>
           <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div style="font-weight: 600; margin-bottom: 4px;">深色模式</div>
-                <div style="font-size: 0.85rem; color: var(--color-text-muted);">切换深色/浅色主题</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+              <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: 6px; font-size: 1rem;">深色模式</div>
+                <div style="font-size: 0.9rem; color: var(--color-text-muted);">切换深色/浅色主题，保护眼睛更舒适</div>
               </div>
-              <label style="position: relative; display: inline-block; width: 52px; height: 28px;">
+              <label style="position: relative; display: inline-block; width: 56px; height: 32px; flex-shrink: 0;">
                 <input 
                   type="checkbox" 
                   :checked="theme === 'dark'" 
                   @change="toggle()"
                   style="opacity: 0; width: 0; height: 0;"
                 >
-                <span style="position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 28px; transition: 0.3s;">
+                <span style="position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 32px; transition: 0.3s;">
                   <span 
-                    style="position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.3s;"
+                    style="position: absolute; height: 26px; width: 26px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.3s;"
                     :style="theme === 'dark' ? 'transform: translateX(24px); background-color: #2563eb;' : ''"
                   ></span>
                 </span>
@@ -126,47 +139,245 @@
         <!-- 通知设置 -->
         <section class="section">
           <h2 class="section-title">通知设置</h2>
-          <div class="card" style="display: flex; flex-direction: column; gap: 18px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div style="font-weight: 600; margin-bottom: 4px;">回访提醒</div>
-                <div style="font-size: 0.85rem; color: var(--color-text-muted);">到期回访自动提醒</div>
+          <div class="card" style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+              <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: 6px; font-size: 1rem;">回访提醒</div>
+                <div style="font-size: 0.9rem; color: var(--color-text-muted);">到期回访自动提醒，不错过任何跟进机会</div>
               </div>
-              <label style="position: relative; display: inline-block; width: 52px; height: 28px;">
+              <label style="position: relative; display: inline-block; width: 56px; height: 32px; flex-shrink: 0;">
                 <input 
                   type="checkbox" 
                   x-model="visitReminder"
                   style="opacity: 0; width: 0; height: 0;"
                 >
-                <span style="position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 28px; transition: 0.3s;" :style="visitReminder ? 'background-color: #10b981;' : ''">
+                <span style="position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 32px; transition: 0.3s;" :style="visitReminder ? 'background-color: #10b981;' : ''">
                   <span 
-                    style="position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.3s;"
+                    style="position: absolute; height: 26px; width: 26px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.3s;"
                     :style="visitReminder ? 'transform: translateX(24px);' : ''"
                   ></span>
                 </span>
               </label>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div style="font-weight: 600; margin-bottom: 4px;">生日提醒</div>
-                <div style="font-size: 0.85rem; color: var(--color-text-muted);">客户生日自动提醒</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+              <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: 6px; font-size: 1rem;">生日提醒</div>
+                <div style="font-size: 0.9rem; color: var(--color-text-muted);">客户生日自动提醒，维护良好客户关系</div>
               </div>
-              <label style="position: relative; display: inline-block; width: 52px; height: 28px;">
+              <label style="position: relative; display: inline-block; width: 56px; height: 32px; flex-shrink: 0;">
                 <input 
                   type="checkbox" 
                   x-model="birthdayReminder"
                   style="opacity: 0; width: 0; height: 0;"
                 >
-                <span style="position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 28px; transition: 0.3s;" :style="birthdayReminder ? 'background-color: #10b981;' : ''">
+                <span style="position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 32px; transition: 0.3s;" :style="birthdayReminder ? 'background-color: #10b981;' : ''">
                   <span 
-                    style="position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.3s;"
+                    style="position: absolute; height: 26px; width: 26px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.3s;"
                     :style="birthdayReminder ? 'transform: translateX(24px);' : ''"
                   ></span>
                 </span>
               </label>
             </div>
           </div>
+        </section>
+
+        <!-- 预设数据管理 -->
+        <section class="section">
+          <h2 class="section-title">预设数据管理</h2>
+          <div class="card" style="background: rgba(37, 99, 235, 0.04); border-color: rgba(37, 99, 235, 0.12);">
+            <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: var(--color-primary);">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4"/>
+                <path d="M12 8h.01"/>
+              </svg>
+              <p style="margin: 0; font-size: 0.95rem; line-height: 1.6; color: var(--color-text-muted);">
+                管理系统中的各类预设选项，便于快速录入和统一规范。预设数据用于客户、回访、订单等模块的快速选择，建议根据实际业务需求定期维护。
+              </p>
+            </div>
+          </div>
+
+          <!-- 预设分类选择 -->
+          <div class="card" style="padding: 14px; margin-top: 16px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <template x-for="cat in presetCategories" :key="cat.id">
+                <button 
+                  class="btn"
+                  :class="activePresetCategory === cat.id ? '' : 'btn-ghost'"
+                  @click="activePresetCategory = cat.id"
+                  style="padding: 12px 18px; font-size: 0.9rem; border-radius: 16px;"
+                >
+                  <span x-text="cat.name"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <!-- 当前预设数据展示 -->
+          <div class="card" style="margin-top: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; gap: 12px; flex-wrap: wrap;">
+              <div>
+                <h3 class="section-title" style="margin: 0 0 6px 0;" x-text="currentPresetInfo.name"></h3>
+                <p style="margin: 0; font-size: 0.9rem; color: var(--color-text-muted);" x-text="currentPresetInfo.description"></p>
+              </div>
+            </div>
+
+            <!-- 客户分类 -->
+            <div x-show="activePresetCategory === 'customer-categories'" x-transition>
+              <div class="list">
+                <template x-for="item in currentPresetData" :key="item.id">
+                  <div class="card" style="background: var(--color-bg); padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                      <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 1rem; margin-bottom: 6px;" x-text="item.name"></div>
+                        <div style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 8px;" x-text="item.description"></div>
+                        <span class="tag tag-neutral" x-text="`使用次数: ${item.count}`"></span>
+                      </div>
+                      <div class="inline-actions" style="gap: 8px;">
+                        <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- 意向等级 -->
+            <div x-show="activePresetCategory === 'customer-intentions'" x-transition>
+              <div class="list">
+                <template x-for="item in currentPresetData" :key="item.id">
+                  <div class="card" style="background: var(--color-bg); padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                      <div style="flex: 1; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;" :style="`background: ${item.color};`"></div>
+                        <div style="flex: 1;">
+                          <div style="font-weight: 600; font-size: 1rem; margin-bottom: 6px;" x-text="item.name"></div>
+                          <div style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 8px;" x-text="item.description"></div>
+                          <span class="tag tag-neutral" x-text="`客户数: ${item.count}`"></span>
+                        </div>
+                      </div>
+                      <div class="inline-actions" style="gap: 8px;">
+                        <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- 地区管理 -->
+            <div x-show="activePresetCategory === 'regions'" x-transition>
+              <div class="list">
+                <template x-for="item in currentPresetData" :key="item.id">
+                  <div class="card" style="background: var(--color-bg); padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                      <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 1rem; margin-bottom: 6px;" x-text="item.name"></div>
+                        <div style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 8px;" x-text="item.description"></div>
+                        <span class="tag tag-neutral" x-text="`客户数: ${item.count}`"></span>
+                      </div>
+                      <div class="inline-actions" style="gap: 8px;">
+                        <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- 预算范围 -->
+            <div x-show="activePresetCategory === 'budget-ranges'" x-transition>
+              <div class="list">
+                <template x-for="item in currentPresetData" :key="item.id">
+                  <div class="card" style="background: var(--color-bg); padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                      <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 1rem; margin-bottom: 6px;" x-text="item.name"></div>
+                        <div style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 8px;" x-text="item.description"></div>
+                        <span class="tag tag-neutral" x-text="`客户数: ${item.count}`"></span>
+                      </div>
+                      <div class="inline-actions" style="gap: 8px;">
+                        <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- 回访方式 -->
+            <div x-show="activePresetCategory === 'visit-methods'" x-transition>
+              <div class="list">
+                <template x-for="item in currentPresetData" :key="item.id">
+                  <div class="card" style="background: var(--color-bg); padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                      <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 1rem; margin-bottom: 6px;" x-text="item.name"></div>
+                        <div style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 8px;" x-text="item.description"></div>
+                        <span class="tag tag-neutral" x-text="`使用次数: ${item.count}`"></span>
+                      </div>
+                      <div class="inline-actions" style="gap: 8px;">
+                        <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- 回访类型 -->
+            <div x-show="activePresetCategory === 'visit-types'" x-transition>
+              <div class="list">
+                <template x-for="item in currentPresetData" :key="item.id">
+                  <div class="card" style="background: var(--color-bg); padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                      <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 1rem; margin-bottom: 6px;" x-text="item.name"></div>
+                        <div style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 8px;" x-text="item.description"></div>
+                        <span class="tag tag-neutral" x-text="`使用次数: ${item.count}`"></span>
+                      </div>
+                      <div class="inline-actions" style="gap: 8px;">
+                        <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- 预设产品 -->
+            <div x-show="activePresetCategory === 'preset-products'" x-transition>
+              <div class="list">
+                <template x-for="item in currentPresetData" :key="item.id">
+                  <div class="card" style="background: var(--color-bg); padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                      <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 1rem; margin-bottom: 6px;" x-text="item.name"></div>
+                        <div style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 8px;">
+                          <span x-text="`产品编码: ${item.code}`"></span> · 
+                          <span x-text="`类别: ${item.category}`"></span>
+                        </div>
+                        <span class="tag" x-text="formatCurrency(item.price)"></span>
+                      </div>
+                      <div class="inline-actions" style="gap: 8px;">
+                        <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('编辑功能待实现', 'info')">编辑</button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <!-- 新增按钮 - 固定在底部方便点击 -->
+          <button class="btn" style="width: 100%; padding: 16px; font-size: 1rem; margin-top: 16px; border-radius: 16px;" @click="showToast('添加功能待实现', 'info')">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            新增 <span x-text="currentPresetInfo.name"></span>
+          </button>
         </section>
 
         <!-- 修改密码 -->
@@ -182,6 +393,7 @@
                   class="input" 
                   placeholder="请输入当前密码" 
                   x-model="currentPassword"
+                  style="padding: 14px 16px; font-size: 1rem;"
                   required
                 >
               </div>
@@ -194,6 +406,7 @@
                   class="input" 
                   placeholder="请输入新密码（至少8位）" 
                   x-model="newPassword"
+                  style="padding: 14px 16px; font-size: 1rem;"
                   minlength="8"
                   required
                 >
@@ -207,11 +420,12 @@
                   class="input" 
                   placeholder="请再次输入新密码" 
                   x-model="confirmPassword"
+                  style="padding: 14px 16px; font-size: 1rem;"
                   required
                 >
               </div>
 
-              <button type="submit" class="btn" style="margin-top: 20px;">更新密码</button>
+              <button type="submit" class="btn" style="width: 100%; margin-top: 24px; padding: 16px; font-size: 1rem; border-radius: 16px;">更新密码</button>
             </form>
           </div>
         </section>
@@ -219,14 +433,15 @@
         <!-- 数据管理 -->
         <section class="section">
           <h2 class="section-title">数据管理</h2>
-          <div class="card" style="display: flex; flex-direction: column; gap: 14px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-              <div>
-                <div style="font-weight: 600; margin-bottom: 4px;">数据备份</div>
-                <div style="font-size: 0.85rem; color: var(--color-text-muted);">备份客户、回访和订单数据</div>
+          <div class="card" style="display: flex; flex-direction: column; gap: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px;">
+              <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: 6px; font-size: 1rem;">数据备份</div>
+                <div style="font-size: 0.9rem; color: var(--color-text-muted);">备份客户、回访和订单数据，确保数据安全</div>
+                <div style="margin-top: 8px; font-size: 0.85rem; color: var(--color-text-muted);">上次备份：2024-05-28</div>
               </div>
-              <button class="btn btn-secondary" style="padding: 10px 16px; font-size: 0.875rem;" @click="showToast('数据备份已创建', 'success')">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <button class="btn btn-secondary" style="padding: 14px 20px; font-size: 0.95rem; border-radius: 14px; flex-shrink: 0;" @click="showToast('数据备份已创建', 'success')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
                   <polyline points="7 10 12 15 17 10"/>
                   <line x1="12" y1="15" x2="12" y2="3"/>
@@ -235,13 +450,15 @@
               </button>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-              <div>
-                <div style="font-weight: 600; margin-bottom: 4px;">恢复数据</div>
-                <div style="font-size: 0.85rem; color: var(--color-text-muted);">从备份文件恢复数据</div>
+            <div style="height: 1px; background: var(--color-border);"></div>
+
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px;">
+              <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: 6px; font-size: 1rem;">恢复数据</div>
+                <div style="font-size: 0.9rem; color: var(--color-text-muted);">从备份文件恢复数据，此操作将覆盖现有数据</div>
               </div>
-              <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.875rem;" @click="if(confirm('确认恢复数据？此操作将覆盖现有数据')) { showToast('数据恢复完成', 'success'); }">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <button class="btn btn-ghost" style="padding: 14px 20px; font-size: 0.95rem; border-radius: 14px; flex-shrink: 0;" @click="if(confirm('确认恢复数据？此操作将覆盖现有数据')) { showToast('数据恢复完成', 'success'); }">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="23 4 23 10 17 10"/>
                   <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
                 </svg>
@@ -249,17 +466,19 @@
               </button>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-              <div>
-                <div style="font-weight: 600; margin-bottom: 4px; color: #ef4444;">清空数据</div>
-                <div style="font-size: 0.85rem; color: var(--color-text-muted);">删除所有业务数据（不可恢复）</div>
+            <div style="height: 1px; background: var(--color-border);"></div>
+
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px;">
+              <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: 6px; font-size: 1rem; color: #ef4444;">清空数据</div>
+                <div style="font-size: 0.9rem; color: var(--color-text-muted);">删除所有业务数据，此操作不可恢复，请谨慎操作</div>
               </div>
               <button 
                 class="btn" 
-                style="padding: 10px 16px; font-size: 0.875rem; background: #ef4444;" 
+                style="padding: 14px 20px; font-size: 0.95rem; background: #ef4444; border-radius: 14px; flex-shrink: 0;" 
                 @click="if(confirm('警告：此操作将删除所有客户、回访和订单数据，且不可恢复！\n\n确认继续？')) { if(confirm('请再次确认：确定要清空所有数据吗？')) { showToast('数据已清空', 'success'); } }"
               >
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="3 6 5 6 21 6"/>
                   <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
                 </svg>
@@ -269,51 +488,39 @@
           </div>
         </section>
 
-        <!-- 预设数据管理 -->
-        <section class="section">
-          <h2 class="section-title">预设数据管理</h2>
-          <div class="card">
-            <p style="margin: 0 0 16px; color: var(--color-text-muted); font-size: 0.9rem;">
-              管理客户分类、意向等级、回访方式等预设选项
-            </p>
-            <a href="presets.html" class="btn btn-ghost" style="display: inline-flex; padding: 10px 16px; font-size: 0.875rem;">
-              前往管理
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </a>
-          </div>
-        </section>
-
         <!-- 关于 -->
         <section class="section">
           <h2 class="section-title">关于系统</h2>
           <div class="card">
-            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem;">
-              <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; flex-direction: column; gap: 16px; font-size: 0.95rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="color: var(--color-text-muted);">系统版本</span>
-                <span style="font-weight: 600;">v2.0.0</span>
+                <span style="font-weight: 600;">v2.1.0</span>
               </div>
-              <div style="display: flex; justify-content: space-between;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="color: var(--color-text-muted);">发布日期</span>
                 <span style="font-weight: 600;">2024-11-07</span>
               </div>
-              <div style="display: flex; justify-content: space-between;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="color: var(--color-text-muted);">技术栈</span>
-                <span style="font-weight: 600;">Alpine.js + Tailwind CSS</span>
+                <span style="font-weight: 600;">Alpine.js + CSS3</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--color-text-muted);">数据统计</span>
+                <span style="font-weight: 600;">68 客户 · 28 回访 · 62 订单</span>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- 退出登录 -->
+        <!-- 退出登录 - 固定大按钮便于点击 -->
         <section class="section">
           <button 
             class="btn btn-ghost" 
-            style="width: 100%; border: 1px solid var(--color-border);"
+            style="width: 100%; border: 2px solid var(--color-border); padding: 18px; font-size: 1.05rem; border-radius: 16px;"
             @click="if(confirm('确认退出登录？')) { window.location.href = 'index.html'; }"
           >
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
               <polyline points="16 17 21 12 16 7"/>
               <line x1="21" y1="12" x2="9" y2="12"/>
