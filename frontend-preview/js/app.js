@@ -50,6 +50,44 @@ function navManager() {
   };
 }
 
+const PINYIN_INITIAL_CACHE = new Map();
+
+function getPinyinInitials(text) {
+  if (!text) {
+    return '';
+  }
+
+  const content = String(text);
+  if (PINYIN_INITIAL_CACHE.has(content)) {
+    return PINYIN_INITIAL_CACHE.get(content);
+  }
+
+  let initials = '';
+  const hasPinyinSupport = typeof TinyPinyin !== 'undefined' && TinyPinyin && typeof TinyPinyin.convertToPinyin === 'function';
+
+  if (hasPinyinSupport) {
+    try {
+      if (!TinyPinyin.isSupported || TinyPinyin.isSupported()) {
+        initials = TinyPinyin.convertToPinyin(content, '', true)
+          .replace(/[^a-zA-Z]/g, '')
+          .toLowerCase();
+      }
+    } catch (error) {
+      console.warn('TinyPinyin 转换失败', error);
+    }
+  }
+
+  if (!initials) {
+    initials = content
+      .split('')
+      .map(char => (/[a-zA-Z0-9]/.test(char) ? char.toLowerCase() : ''))
+      .join('');
+  }
+
+  PINYIN_INITIAL_CACHE.set(content, initials);
+  return initials;
+}
+
 // 搜索字段配置
 const SEARCH_FIELD_CONFIGS = Object.freeze({
   customer: [
@@ -126,20 +164,47 @@ function applyPrioritySearch(items, keyword, fieldConfigs) {
           continue;
         }
 
+        let matchFound = false;
+        let matchWeight = 0;
+
+        // 1. 直接文本匹配
         const position = text.indexOf(lowerKeyword);
-        if (position === -1) {
-          continue;
+        if (position !== -1) {
+          matchFound = true;
+          let weight = config.weight || 1;
+          if (text === lowerKeyword) {
+            weight *= 3;
+          } else if (position === 0) {
+            weight *= 2;
+          }
+          matchWeight = weight;
         }
 
-        let weight = config.weight || 1;
-        if (text === lowerKeyword) {
-          weight *= 3;
-        } else if (position === 0) {
-          weight *= 2;
+        // 2. 拼音首字母匹配（仅当直接匹配失败且关键词全为字母时）
+        if (!matchFound && /^[a-z]+$/.test(lowerKeyword)) {
+          const pinyinInitials = getPinyinInitials(String(value));
+          if (pinyinInitials) {
+            const pinyinPosition = pinyinInitials.indexOf(lowerKeyword);
+            if (pinyinPosition !== -1) {
+              matchFound = true;
+              let weight = config.weight || 1;
+              // 拼音匹配的权重稍低于直接匹配
+              if (pinyinInitials === lowerKeyword) {
+                weight *= 2.5; // 完全匹配拼音首字母
+              } else if (pinyinPosition === 0) {
+                weight *= 1.8; // 从开头匹配拼音首字母
+              } else {
+                weight *= 1.2; // 中间匹配拼音首字母
+              }
+              matchWeight = weight;
+            }
+          }
         }
 
-        score += weight;
-        break;
+        if (matchFound) {
+          score += matchWeight;
+          break;
+        }
       }
     }
 
