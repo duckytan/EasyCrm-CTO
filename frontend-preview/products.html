@@ -80,11 +80,15 @@
         search: '',
         statusFilter: '',
         get filteredProducts() {
-          return this.products.filter(product => {
-            const matchSearch = !this.search || product.customerName.includes(this.search) || product.productName.includes(this.search) || product.productCode.includes(this.search);
-            const matchStatus = !this.statusFilter || product.status === this.statusFilter;
-            return matchSearch && matchStatus;
-          });
+          let results = this.products;
+          
+          // 先应用状态过滤
+          if (this.statusFilter) {
+            results = results.filter(p => p.status === this.statusFilter);
+          }
+          
+          // 应用全字段优先级搜索
+          return applyPrioritySearch(results, this.search, SEARCH_FIELD_CONFIGS.product);
         }
       }">
         <section class="section">
@@ -106,7 +110,7 @@
 
         <section class="section">
           <div class="search-bar">
-            <input type="search" class="input" placeholder="搜索客户或产品" x-model="search" style="flex: 2;">
+            <input type="search" class="input" placeholder="搜索产品名称、客户、订单编号、地址、备注等信息..." x-model="search" style="flex: 2;">
             <select class="select" x-model="statusFilter" style="flex: 1;">
               <option value="">全部状态</option>
               <option value="delivered">已交付</option>
@@ -121,10 +125,10 @@
         <section class="section">
           <h2 class="section-title">订单列表 <span style="color: var(--color-text-muted); font-weight: normal; font-size: 0.875rem;">（共 <span x-text="filteredProducts.length"></span> 条）</span></h2>
           <template x-if="filteredProducts.length === 0">
-            <div class="empty-state">暂无订单</div>
+            <div class="empty-state">未找到匹配的订单</div>
           </template>
 
-          <div class="list">
+          <div class="list" x-show="filteredProducts.length > 0">
             <template x-for="product in filteredProducts" :key="product.id">
               <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
                 <div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;">

@@ -50,6 +50,118 @@ function navManager() {
   };
 }
 
+// 搜索字段配置
+const SEARCH_FIELD_CONFIGS = Object.freeze({
+  customer: [
+    { accessor: item => item.name, weight: 120 },
+    { accessor: item => item.company, weight: 110 },
+    { accessor: item => item.phone, weight: 100 },
+    { accessor: item => item.email, weight: 80 },
+    { accessor: item => item.wechat, weight: 70 },
+    { accessor: item => item.position, weight: 70 },
+    { accessor: item => [item.categoryName, item.category], weight: 65 },
+    { accessor: item => [item.intentionName, item.intention], weight: 65 },
+    { accessor: item => [item.regionDetail, item.region], weight: 60 },
+    { accessor: item => item.source, weight: 55 },
+    { accessor: item => item.notes, weight: 50 },
+    { accessor: item => item.budget, weight: 45 },
+    { accessor: item => [item.totalOrders, item.totalAmount], weight: 40 },
+    { accessor: item => [item.createTime, item.lastVisit, item.birthday], weight: 35 }
+  ],
+  product: [
+    { accessor: item => item.productName, weight: 120 },
+    { accessor: item => item.customerName, weight: 110 },
+    { accessor: item => item.productCode, weight: 100 },
+    { accessor: item => [item.statusText, item.status], weight: 80 },
+    { accessor: item => item.deliveryAddress, weight: 70 },
+    { accessor: item => item.orderNote, weight: 60 },
+    { accessor: item => item.afterSale, weight: 55 },
+    { accessor: item => [item.purchaseDate, item.followUpDate, item.warranty], weight: 50 },
+    { accessor: item => [item.quantity, item.price, item.total], weight: 45 }
+  ],
+  visit: [
+    { accessor: item => item.customerName, weight: 120 },
+    { accessor: item => item.content, weight: 105 },
+    { accessor: item => item.type, weight: 95 },
+    { accessor: item => item.method, weight: 85 },
+    { accessor: item => item.effect, weight: 70 },
+    { accessor: item => item.followUp, weight: 65 },
+    { accessor: item => [item.satisfaction, item.intention, item.intentionPrev], weight: 60 },
+    { accessor: item => [item.visitTime, item.nextVisitDate], weight: 55 },
+    { accessor: item => item.duration, weight: 45 }
+  ]
+});
+
+function applyPrioritySearch(items, keyword, fieldConfigs) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  const trimmedKeyword = (keyword || '').trim();
+  if (!trimmedKeyword) {
+    return items.slice();
+  }
+
+  const lowerKeyword = trimmedKeyword.toLowerCase();
+  const configs = Array.isArray(fieldConfigs) ? fieldConfigs : [];
+  const results = [];
+
+  items.forEach((item, originalIndex) => {
+    let score = 0;
+
+    for (const config of configs) {
+      const rawValue = typeof config.accessor === 'function'
+        ? config.accessor(item)
+        : item && config.field ? item[config.field] : undefined;
+
+      const values = Array.isArray(rawValue) ? rawValue : [rawValue];
+
+      for (const value of values) {
+        if (value === undefined || value === null) {
+          continue;
+        }
+
+        const text = String(value).toLowerCase();
+        if (!text) {
+          continue;
+        }
+
+        const position = text.indexOf(lowerKeyword);
+        if (position === -1) {
+          continue;
+        }
+
+        let weight = config.weight || 1;
+        if (text === lowerKeyword) {
+          weight *= 3;
+        } else if (position === 0) {
+          weight *= 2;
+        }
+
+        score += weight;
+        break;
+      }
+    }
+
+    if (score > 0) {
+      results.push({ item, score, index: originalIndex });
+    }
+  });
+
+  if (!results.length) {
+    return [];
+  }
+
+  results.sort((a, b) => {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+    return a.index - b.index;
+  });
+
+  return results.map(entry => entry.item);
+}
+
 // 模拟数据生成器
 const mockData = {
   // 仪表盘统计

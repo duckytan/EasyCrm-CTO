@@ -78,15 +78,17 @@
         filterCategory: '',
         filterIntention: '',
         get filteredCustomers() {
-          return this.customers.filter(c => {
-            const matchSearch = !this.search || 
-              c.name.includes(this.search) || 
-              c.company.includes(this.search) || 
-              c.phone.includes(this.search);
+          let results = this.customers;
+          
+          // 先应用分类和意向过滤
+          results = results.filter(c => {
             const matchCategory = !this.filterCategory || c.category === this.filterCategory;
             const matchIntention = !this.filterIntention || c.intention === this.filterIntention;
-            return matchSearch && matchCategory && matchIntention;
+            return matchCategory && matchIntention;
           });
+          
+          // 应用全字段优先级搜索
+          return applyPrioritySearch(results, this.search, SEARCH_FIELD_CONFIGS.customer);
         }
       }">
         <!-- 搜索和过滤 -->
@@ -95,7 +97,7 @@
             <input 
               type="search" 
               class="input" 
-              placeholder="搜索客户姓名、公司或电话" 
+              placeholder="搜索客户姓名、公司、电话、邮箱、地址等任意信息..." 
               x-model="search"
               style="flex: 2; min-width: 200px;"
             >
@@ -137,7 +139,7 @@
         <!-- 客户列表 -->
         <section class="section">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-            <h2 class="section-title" style="margin: 0;">客户列表</h2>
+            <h2 class="section-title" style="margin: 0;">客户列表 <span style="color: var(--color-text-muted); font-weight: 400; font-size: 0.875rem;">（共 <span x-text="filteredCustomers.length"></span> 条）</span></h2>
             <button class="btn" style="padding: 10px 16px; font-size: 0.875rem;">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"/>
@@ -153,7 +155,7 @@
             </div>
           </template>
 
-          <div class="customer-grid">
+          <div class="customer-grid" x-show="filteredCustomers.length > 0">
             <template x-for="customer in filteredCustomers" :key="customer.id">
               <div class="customer-card">
                 <div class="customer-card__header">
