@@ -721,23 +721,34 @@ img {
   .app-shell {
     flex-direction: row;
     align-items: stretch;
+    min-height: 100vh;
+    padding-left: calc(260px + 40px);
+    box-sizing: border-box;
   }
   .primary-nav {
-    position: sticky;
-    top: 0;
-    bottom: auto;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    bottom: 20px;
     flex-direction: column;
     width: 260px;
-    min-height: 100vh;
     border-top: none;
-    border-right: 1px solid var(--color-border);
+    border-right: none;
     padding: 0;
     gap: 0;
     flex-shrink: 0;
-    background: var(--color-surface);
-    backdrop-filter: none;
-    box-shadow: 1px 0 0 var(--color-border);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.1);
     overflow-y: auto;
+    z-index: 20;
+    border-radius: 20px;
+    border: 1px solid var(--color-border);
+  }
+
+  [data-theme="dark"] .primary-nav {
+    background: rgba(18, 30, 54, 0.85);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
   
   .nav-brand {
