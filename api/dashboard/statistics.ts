@@ -9,6 +9,8 @@ interface DashboardStatistics {
   monthlyNewCustomers: number;
   monthlyVisits: number;
   monthlyTransactionCustomers: number;
+  totalCustomers: number;
+  activeCustomers: number;
   intentionDistribution: {
     level: string;
     name: string;
@@ -260,6 +262,32 @@ async function getDashboardStatistics(
   // 按日期排序
   reminders.sort((a, b) => a.reminderDate.localeCompare(b.reminderDate));
 
+  // 计算总客户数和活跃客户数（近30天有回访或订单的客户）
+  const totalCustomers = await prisma.customer.count();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const activeCustomerIds = new Set<number>();
+
+  const recentVisits = await prisma.visit.findMany({
+    where: {
+      visitTime: { gte: thirtyDaysAgo }
+    },
+    select: { customerId: true },
+    distinct: ['customerId']
+  });
+
+  const recentOrders = await prisma.productOrder.findMany({
+    where: {
+      purchaseDate: { gte: thirtyDaysAgo }
+    },
+    select: { customerId: true },
+    distinct: ['customerId']
+  });
+
+  recentVisits.forEach(v => activeCustomerIds.add(v.customerId));
+  recentOrders.forEach(o => activeCustomerIds.add(o.customerId));
+
   const statistics: DashboardStatistics = {
     monthlySales: Math.round(monthlySales * 100) / 100,
     monthlyOrders,
@@ -267,6 +295,8 @@ async function getDashboardStatistics(
     monthlyNewCustomers,
     monthlyVisits,
     monthlyTransactionCustomers,
+    totalCustomers,
+    activeCustomers: activeCustomerIds.size,
     intentionDistribution,
     importantReminders: reminders,
   };
