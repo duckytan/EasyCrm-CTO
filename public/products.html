@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <title>产品订单 - AI-CRM 系统</title>
+  <link rel="stylesheet" href="css/base.css">
+  <script src="js/tiny-pinyin.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/navbar-loader.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+</head>
+<body x-data="themeManager()" x-init="init()" data-page="products">
+  <div class="app-shell">
+    <div id="navbar-container"></div>
+
+    <div class="content-area">
+      <header class="top-bar">
+        <h1 class="top-bar__title">产品订单</h1>
+        <div class="top-bar__actions">
+          <button class="theme-toggle" @click="toggle()" type="button">
+            <svg x-show="theme === 'light'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg x-show="theme === 'dark'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </button>
+          <button class="btn" style="padding: 10px 16px; font-size: 0.875rem;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            新增订单
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content" x-data="{
+        products: mockData.products,
+        search: '',
+        statusFilter: '',
+        get filteredProducts() {
+          let results = this.products;
+          
+          // 先应用状态过滤
+          if (this.statusFilter) {
+            results = results.filter(p => p.status === this.statusFilter);
+          }
+          
+          // 应用全字段优先级搜索
+          return applyPrioritySearch(results, this.search, SEARCH_FIELD_CONFIGS.product);
+        }
+      }">
+        <section class="section">
+          <div class="grid-three">
+            <div class="card">
+              <div class="stat-label">总销售额</div>
+              <div class="stat-value" x-text="formatCurrency(products.reduce((sum, p) => sum + p.total, 0))"></div>
+            </div>
+            <div class="card">
+              <div class="stat-label">订单数量</div>
+              <div class="stat-value" x-text="products.length"></div>
+            </div>
+            <div class="card">
+              <div class="stat-label">平均客单价</div>
+              <div class="stat-value" x-text="products.length ? formatCurrency(products.reduce((sum, p) => sum + p.total, 0) / products.length) : formatCurrency(0)"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="search-bar">
+            <input type="search" class="input" placeholder="搜索产品名称、客户、订单编号、地址、备注等信息..." x-model="search" style="flex: 2;">
+            <select class="select" x-model="statusFilter" style="flex: 1;">
+              <option value="">全部状态</option>
+              <option value="delivered">已交付</option>
+              <option value="shipped">已发货</option>
+              <option value="processing">处理中</option>
+              <option value="pending">待签约</option>
+              <option value="trial">试用中</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">订单列表 <span style="color: var(--color-text-muted); font-weight: normal; font-size: 0.875rem;">（共 <span x-text="filteredProducts.length"></span> 条）</span></h2>
+          <template x-if="filteredProducts.length === 0">
+            <div class="empty-state">未找到匹配的订单</div>
+          </template>
+
+          <div class="list" x-show="filteredProducts.length > 0">
+            <template x-for="product in filteredProducts" :key="product.id">
+              <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                  <div>
+                    <h3 style="margin: 0; font-size: 1.05rem;" x-text="product.productName"></h3>
+                    <a :href="`customer-detail.html?id=${product.customerId}`" style="margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--color-primary);">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                      <span x-text="product.customerName"></span>
+                    </a>
+                  </div>
+                  <div style="text-align: right;">
+                    <div class="stat-value" style="font-size: 1.25rem;" x-text="formatCurrency(product.total)"></div>
+                    <div style="margin-top: 4px; font-size: 0.85rem; color: var(--color-text-muted);">
+                      数量：<span x-text="product.quantity"></span>
+                      · 单价 <span x-text="formatCurrency(product.price)"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                  <div class="info-cell">
+                    <div class="info-label">购买日期</div>
+                    <div class="info-value" x-text="formatDate(product.purchaseDate)"></div>
+                  </div>
+                  <div class="info-cell">
+                    <div class="info-label">跟进日期</div>
+                    <div class="info-value" x-text="formatDate(product.followUpDate)"></div>
+                  </div>
+                  <div class="info-cell">
+                    <div class="info-label">售后服务</div>
+                    <div class="info-value" x-text="product.afterSale"></div>
+                  </div>
+                  <div class="info-cell">
+                    <div class="info-label">状态</div>
+                    <div class="info-value">
+                      <span 
+                        class="tag" 
+                        :class="{
+                          'tag-success': product.status === 'delivered',
+                          'tag-warning': product.status === 'shipped' || product.status === 'pending',
+                          'tag-neutral': product.status === 'trial'
+                        }"
+                        x-text="product.statusText || product.status"
+                      ></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="background: var(--color-bg); padding: 12px 14px; border-radius: 12px; display: flex; flex-direction: column; gap: 8px;">
+                  <div class="info-label">交付信息</div>
+                  <div style="font-size: 0.85rem; color: var(--color-text-muted);">
+                    地址：<span x-text="product.deliveryAddress"></span>
+                  </div>
+                  <div style="font-size: 0.85rem; color: var(--color-text-muted);">
+                    质保：<span x-text="formatDate(product.warranty)"></span>
+                  </div>
+                  <template x-if="product.orderNote">
+                    <div style="font-size: 0.85rem; color: var(--color-text-muted);">备注：<span x-text="product.orderNote"></span></div>
+                  </template>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+                  <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.85rem;">编辑</button>
+                  <button class="btn" style="padding: 10px 16px; font-size: 0.85rem;">记录回访</button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

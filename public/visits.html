@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <title>回访记录 - AI-CRM 系统</title>
+  <link rel="stylesheet" href="css/base.css">
+  <script src="js/tiny-pinyin.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/navbar-loader.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+</head>
+<body x-data="themeManager()" x-init="init()" data-page="visits">
+  <div class="app-shell">
+    <div id="navbar-container"></div>
+
+    <div class="content-area">
+      <header class="top-bar">
+        <h1 class="top-bar__title">回访记录</h1>
+        <div class="top-bar__actions">
+          <button class="theme-toggle" @click="toggle()" type="button">
+            <svg x-show="theme === 'light'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg x-show="theme === 'dark'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </button>
+          <button class="btn" style="padding: 10px 16px; font-size: 0.875rem;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            新增回访
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content" x-data="{ 
+        visits: mockData.visits,
+        search: '',
+        filterMethod: '',
+        get filteredVisits() {
+          let results = this.visits;
+          
+          if (this.filterMethod) {
+            results = results.filter(visit => visit.method === this.filterMethod);
+          }
+          
+          return applyPrioritySearch(results, this.search, SEARCH_FIELD_CONFIGS.visit);
+        }
+      }">
+        <section class="section">
+          <div class="grid-three">
+            <div class="card">
+              <div class="stat-label">本月回访</div>
+              <div class="stat-value">15</div>
+            </div>
+            <div class="card">
+              <div class="stat-label">平均满意度</div>
+              <div class="stat-value">96%</div>
+            </div>
+            <div class="card">
+              <div class="stat-label">待跟进</div>
+              <div class="stat-value">3</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="search-bar">
+            <input type="search" class="input" placeholder="搜索客户姓名、回访内容、类型、方式等信息..." x-model="search" style="flex: 2;">
+            <select class="select" x-model="filterMethod" style="flex: 1;">
+              <option value="">全部方式</option>
+              <option value="电话回访">电话回访</option>
+              <option value="现场拜访">现场拜访</option>
+              <option value="线上会议">线上会议</option>
+              <option value="邮件沟通">邮件沟通</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">回访列表 <span style="color: var(--color-text-muted); font-weight: 400; font-size: 0.875rem;">（共 <span x-text="filteredVisits.length"></span> 条）</span></h2>
+          <template x-if="filteredVisits.length === 0">
+            <div class="empty-state">未找到匹配的回访记录</div>
+          </template>
+
+          <div class="timeline" x-show="filteredVisits.length > 0">
+            <template x-for="visit in filteredVisits" :key="visit.id">
+              <div class="timeline-item">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;">
+                  <div style="flex: 1; min-width: 0;">
+                    <a :href="`customer-detail.html?id=${visit.customerId}`" style="font-weight: 700; font-size: 1.05rem; color: var(--color-primary);" x-text="visit.customerName"></a>
+                    <div style="margin-top: 4px; color: var(--color-text-muted); font-size: 0.85rem;" x-text="visit.visitTime"></div>
+                  </div>
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <span class="tag" x-text="visit.method"></span>
+                    <span class="tag tag-warning" x-text="visit.type"></span>
+                  </div>
+                </div>
+
+                <div style="margin-top: 14px; padding: 12px 14px; background: var(--color-bg); border-radius: 12px;">
+                  <div class="info-label">回访内容</div>
+                  <p style="margin: 6px 0 0 0; line-height: 1.6;" x-text="visit.content"></p>
+                </div>
+
+                <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
+                  <div class="info-cell" style="flex: 1; min-width: 140px;">
+                    <div class="info-label">效果</div>
+                    <div class="info-value" x-text="visit.effect"></div>
+                  </div>
+                  <div class="info-cell" style="flex: 1; min-width: 140px;">
+                    <div class="info-label">满意度</div>
+                    <div class="info-value" x-text="visit.satisfaction"></div>
+                  </div>
+                  <div class="info-cell" style="flex: 1; min-width: 140px;">
+                    <div class="info-label">意向变化</div>
+                    <div class="info-value">
+                      <span x-text="visit.intentionPrev"></span>
+                      <svg style="display: inline; width: 14px; height: 14px; margin: 0 4px;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                      <span x-text="visit.intention"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 12px; font-size: 0.85rem; color: var(--color-text-muted);">
+                  下一步：<span x-text="visit.followUp"></span>
+                </div>
+              </div>
+            </template>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
