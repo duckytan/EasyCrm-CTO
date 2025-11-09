@@ -5,6 +5,9 @@ function customersPage() {
     customers: [],
     categories: [],
     intentions: [],
+    regions: [],
+    budgetRanges: [],
+    visitMethods: [],
     search: '',
     filterCategory: '',
     filterIntention: '',
@@ -19,6 +22,11 @@ function customersPage() {
       monthlyNew: 0,
       pendingVisits: 0
     },
+    showModal: false,
+    modalMode: 'create',
+    modalLoading: false,
+    formData: {},
+    formErrors: {},
     async init() {
       if (!apiClient.isAuthenticated()) {
         window.location.href = '/index.html';
@@ -29,9 +37,12 @@ function customersPage() {
     },
     async loadFilters() {
       try {
-        const [categoryData, intentionData] = await Promise.all([
+        const [categoryData, intentionData, regionData, budgetData, visitMethodData] = await Promise.all([
           apiClient.getPresets('customer-categories'),
-          apiClient.getPresets('customer-intentions')
+          apiClient.getPresets('customer-intentions'),
+          apiClient.getPresets('regions'),
+          apiClient.getPresets('budget-ranges'),
+          apiClient.getPresets('visit-methods')
         ]);
 
         this.categories = Array.isArray(categoryData?.data)
@@ -44,6 +55,24 @@ function customersPage() {
           ? intentionData.data
           : Array.isArray(intentionData)
             ? intentionData
+            : [];
+        
+        this.regions = Array.isArray(regionData?.data)
+          ? regionData.data
+          : Array.isArray(regionData)
+            ? regionData
+            : [];
+        
+        this.budgetRanges = Array.isArray(budgetData?.data)
+          ? budgetData.data
+          : Array.isArray(budgetData)
+            ? budgetData
+            : [];
+        
+        this.visitMethods = Array.isArray(visitMethodData?.data)
+          ? visitMethodData.data
+          : Array.isArray(visitMethodData)
+            ? visitMethodData
             : [];
       } catch (error) {
         console.warn('加载筛选项失败', error);
@@ -150,6 +179,131 @@ function customersPage() {
         await this.loadCustomers();
       } catch (error) {
         alert('删除失败：' + error.message);
+      }
+    },
+    openCreateModal() {
+      this.modalMode = 'create';
+      this.formData = {
+        name: '',
+        phone: '',
+        email: '',
+        company: '',
+        birthday: '',
+        address: '',
+        demand: '',
+        wechat: '',
+        whatsapp: '',
+        facebook: '',
+        remark: '',
+        customerCategoryId: '',
+        customerIntentionLevel: '',
+        regionId: '',
+        budgetRangeId: '',
+        plannedVisitDate: '',
+        plannedVisitContent: '',
+        plannedVisitMethodId: ''
+      };
+      this.formErrors = {};
+      this.modalLoading = false;
+      this.showModal = true;
+    },
+    async openEditModal(customer) {
+      this.modalMode = 'edit';
+      this.modalLoading = true;
+      try {
+        const detailData = await apiClient.getCustomer(customer.id);
+        this.formData = {
+          id: detailData.id,
+          name: detailData.name || '',
+          phone: detailData.phone || '',
+          email: detailData.email || '',
+          company: detailData.company || '',
+          birthday: detailData.birthday ? detailData.birthday.split('T')[0] : '',
+          address: detailData.address || '',
+          demand: detailData.demand || '',
+          wechat: detailData.wechat || '',
+          whatsapp: detailData.whatsapp || '',
+          facebook: detailData.facebook || '',
+          remark: detailData.remark || '',
+          customerCategoryId: detailData.category || '',
+          customerIntentionLevel: detailData.intention || '',
+          regionId: detailData.region || '',
+          budgetRangeId: detailData.budgetRange || '',
+          plannedVisitDate: detailData.plannedVisitDate ? detailData.plannedVisitDate.split('T')[0] : '',
+          plannedVisitContent: detailData.plannedVisitContent || '',
+          plannedVisitMethodId: detailData.plannedVisitMethodId ? String(detailData.plannedVisitMethodId) : ''
+        };
+        this.formErrors = {};
+        this.showModal = true;
+      } catch (error) {
+        alert('加载客户信息失败：' + error.message);
+      } finally {
+        this.modalLoading = false;
+      }
+    },
+    closeModal() {
+      this.showModal = false;
+      this.modalLoading = false;
+      this.formData = {};
+      this.formErrors = {};
+    },
+    validateForm() {
+      this.formErrors = {};
+      
+      if (!this.formData.name || !this.formData.name.trim()) {
+        this.formErrors.name = '客户姓名不能为空';
+      }
+      
+      if (!this.formData.phone || !this.formData.phone.trim()) {
+        this.formErrors.phone = '联系电话不能为空';
+      } else if (!/^[0-9+\-()\s]+$/.test(this.formData.phone)) {
+        this.formErrors.phone = '电话号码格式不正确';
+      }
+      
+      if (this.formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.email)) {
+        this.formErrors.email = '邮箱格式不正确';
+      }
+      
+      return Object.keys(this.formErrors).length === 0;
+    },
+    async submitForm() {
+      if (!this.validateForm()) {
+        return;
+      }
+      
+      this.modalLoading = true;
+      
+      try {
+        const submitData = { ...this.formData };
+        
+        // 清理空字段
+        Object.keys(submitData).forEach(key => {
+          if (submitData[key] === '') {
+            submitData[key] = null;
+          }
+        });
+
+        if (submitData.plannedVisitMethodId !== null && submitData.plannedVisitMethodId !== undefined) {
+          const methodId = Number(submitData.plannedVisitMethodId);
+          submitData.plannedVisitMethodId = Number.isNaN(methodId) ? null : methodId;
+        }
+        
+        if (this.modalMode === 'create') {
+          await apiClient.createCustomer(submitData);
+          alert('客户创建成功');
+        } else {
+          const customerId = submitData.id;
+          delete submitData.id;
+          await apiClient.updateCustomer(customerId, submitData);
+          alert('客户更新成功');
+        }
+        
+        this.closeModal();
+        await this.loadCustomers();
+      } catch (error) {
+        alert('操作失败：' + error.message);
+      } finally {
+        this.modalLoading = false;
       }
     }
   };
