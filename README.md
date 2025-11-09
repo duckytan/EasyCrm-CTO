@@ -33,6 +33,7 @@ npm run dev
 
 ### 核心文档
 - [部署指南](docs/DEPLOYMENT.md) - 完整的生产部署说明
+- [Vercel 部署详细教程](docs/Vercel部署详细教程.md) - 零基础图文部署流程
 - [开发指南](DEVELOPMENT.md) - 本地开发和调试说明
 - [前端文档](docs/FRONTEND.md) - 前端页面和组件说明
 
@@ -137,7 +138,9 @@ npm i -g vercel
 vercel --prod
 ```
 
-详细部署步骤请查看 [部署指南](docs/DEPLOYMENT.md)。
+详细部署步骤请查看：
+- **新手推荐**：[Vercel 部署详细教程](docs/Vercel部署详细教程.md) - 从零开始的图文教程
+- **快速参考**：[部署指南](docs/DEPLOYMENT.md) - 简明部署流程
 
 ## 📝 API 端点
 
