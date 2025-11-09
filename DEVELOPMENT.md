@@ -90,7 +90,7 @@ ai-crm-serverless/
 ├── tests/                 # 测试文件
 │   ├── api/               # API 测试
 │   └── integration/       # 集成测试
-├── doc_move/              # 项目文档
+├── docs/technical/              # 项目文档
 ├── package.json           # 项目配置
 ├── tsconfig.json          # TypeScript 配置
 ├── vercel.json            # Vercel 部署配置
@@ -138,7 +138,7 @@ Phase 0 完成后，接下来将进入：
 详细的开发计划请参考：
 - [DEV_PLAN.md](./DEV_PLAN.md) - 完整开发计划
 - [PROGRESS_TRACKER.md](./PROGRESS_TRACKER.md) - 进度跟踪
-- [doc_move/05_重新开发任务规划.md](./doc_move/05_重新开发任务规划.md) - 详细任务拆解
+- [05_重新开发任务规划.md](./docs/technical/05_重新开发任务规划.md) - 详细任务拆解
 
 ## 开发工具
 

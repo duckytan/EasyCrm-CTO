@@ -7,7 +7,7 @@
 ## 📋 执行摘要
 
 ### 项目定位
-基于既有文档集（`doc_move/`）进行 AI-CRM 系统的 Serverless 化重构，实现 100% 业务功能复刻，并满足云原生架构的性能、安全与可维护性要求。
+基于既有文档集（`docs/technical/`）进行 AI-CRM 系统的 Serverless 化重构，实现 100% 业务功能复刻，并满足云原生架构的性能、安全与可维护性要求。
 
 ### 关键成果物
 - ✅ 完整的后端 Serverless API（Vercel Functions）
@@ -625,14 +625,14 @@ R2_SECRET_ACCESS_KEY=...
 
 | 文档 | 路径 | 用途 |
 | --- | --- | --- |
-| 项目概览 | `doc_move/README.md` | 了解项目背景与目标 |
-| 快速开始 | `doc_move/00_快速开始指南.md` | 环境搭建与部署 |
-| 需求规格 | `doc_move/01_项目需求规格说明.md` | 功能需求与接口契约 |
-| 架构设计 | `doc_move/02_技术架构设计文档.md` | 技术栈与模块划分 |
-| 业务规则 | `doc_move/03_项目规则与AI算法.md` | 校验规则与算法逻辑 |
-| UI 规范 | `doc_move/04_UI设计与交互规范.md` | 界面设计与交互标准 |
-| 任务规划 | `doc_move/05_重新开发任务规划.md` | 阶段任务与 DoD |
-| 最佳实践 | `doc_move/06_开发建议与最佳实践.md` | 技术建议与质量标准 |
+| 项目概览 | `docs/technical/README.md` | 了解项目背景与目标 |
+| 快速开始 | `docs/technical/00_快速开始指南.md` | 环境搭建与部署 |
+| 需求规格 | `docs/technical/01_项目需求规格说明.md` | 功能需求与接口契约 |
+| 架构设计 | `docs/technical/02_技术架构设计文档.md` | 技术栈与模块划分 |
+| 业务规则 | `docs/technical/03_项目规则与AI算法.md` | 校验规则与算法逻辑 |
+| UI 规范 | `docs/technical/04_UI设计与交互规范.md` | 界面设计与交互标准 |
+| 任务规划 | `docs/technical/05_重新开发任务规划.md` | 阶段任务与 DoD |
+| 最佳实践 | `docs/technical/06_开发建议与最佳实践.md` | 技术建议与质量标准 |
 
 ---
 

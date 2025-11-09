@@ -141,15 +141,15 @@
 
 ### 4️⃣ 参考文档类
 
-#### 技术文档（doc_move/）
-- [README.md](./doc_move/README.md) - 项目概览
-- [00_快速开始指南.md](./doc_move/00_快速开始指南.md) - 环境搭建
-- [01_项目需求规格说明.md](./doc_move/01_项目需求规格说明.md) - 功能需求
-- [02_技术架构设计文档.md](./doc_move/02_技术架构设计文档.md) - 架构设计
-- [03_项目规则与AI算法.md](./doc_move/03_项目规则与AI算法.md) - 业务规则
-- [04_UI设计与交互规范.md](./doc_move/04_UI设计与交互规范.md) - UI 规范
-- [05_重新开发任务规划.md](./doc_move/05_重新开发任务规划.md) - 任务规划
-- [06_开发建议与最佳实践.md](./doc_move/06_开发建议与最佳实践.md) - 最佳实践
+#### 技术文档（docs/technical/）
+- [README.md](./docs/technical/README.md) - 项目概览
+- [00_快速开始指南.md](./docs/technical/00_快速开始指南.md) - 环境搭建
+- [01_项目需求规格说明.md](./docs/technical/01_项目需求规格说明.md) - 功能需求
+- [02_技术架构设计文档.md](./docs/technical/02_技术架构设计文档.md) - 架构设计
+- [03_项目规则与AI算法.md](./docs/technical/03_项目规则与AI算法.md) - 业务规则
+- [04_UI设计与交互规范.md](./docs/technical/04_UI设计与交互规范.md) - UI 规范
+- [05_重新开发任务规划.md](./docs/technical/05_重新开发任务规划.md) - 任务规划
+- [06_开发建议与最佳实践.md](./docs/technical/06_开发建议与最佳实践.md) - 最佳实践
 
 **何时使用**：
 - ✅ 开发前：全面了解需求和架构
@@ -162,7 +162,7 @@
 
 ### 项目启动阶段
 1. 阅读 [DEV_PLAN.md](./DEV_PLAN.md) 了解整体规划
-2. 阅读 doc_move/ 下的技术文档了解需求
+2. 阅读 docs/technical/ 下的技术文档了解需求
 3. 审阅 [RISK_REGISTER.md](./RISK_REGISTER.md) 识别初始风险
 4. 召开项目启动会，确认计划
 
@@ -215,7 +215,7 @@
                               ▲
                               │
                     ┌─────────┴─────────┐
-                    │ doc_move/ 技术文档 │
+                    │ docs/technical/ 技术文档 │
                     │ (需求、架构、规范) │
                     └───────────────────┘
 ```
@@ -233,8 +233,8 @@
 - **如何报告问题** → [ISSUE_TRACKER.md](./ISSUE_TRACKER.md) 问题登记模板
 - **有哪些风险** → [RISK_REGISTER.md](./RISK_REGISTER.md) 风险列表
 - **如何执行测试** → [TEST_PLAN.md](./TEST_PLAN.md) 测试执行计划
-- **功能需求是什么** → [01_项目需求规格说明.md](./doc_move/01_项目需求规格说明.md)
-- **技术架构如何设计** → [02_技术架构设计文档.md](./doc_move/02_技术架构设计文档.md)
+- **功能需求是什么** → [01_项目需求规格说明.md](./docs/technical/01_项目需求规格说明.md)
+- **技术架构如何设计** → [02_技术架构设计文档.md](./docs/technical/02_技术架构设计文档.md)
 
 ---
 
@@ -290,7 +290,7 @@
 4. **每 Phase**：准备验收材料，执行阶段验收
 
 ### 对于开发工程师
-1. **开发前**：阅读 doc_move/ 技术文档
+1. **开发前**：阅读 docs/technical/ 技术文档
 2. **开发中**：参考 TEST_PLAN 编写测试
 3. **发现问题**：在 ISSUE_TRACKER 登记
 4. **每日**：更新任务状态
@@ -348,7 +348,7 @@
 1. **首次使用**：从 [DEV_PLAN.md](./DEV_PLAN.md) 开始，全面了解项目
 2. **日常使用**：主要关注 [PROGRESS_TRACKER.md](./PROGRESS_TRACKER.md) 和 [ISSUE_TRACKER.md](./ISSUE_TRACKER.md)
 3. **阶段验收**：使用 [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md) 逐项检查
-4. **遇到问题**：查阅 doc_move/ 技术文档或联系 Tech Lead
+4. **遇到问题**：查阅 docs/technical/ 技术文档或联系 Tech Lead
 
 ---
 
