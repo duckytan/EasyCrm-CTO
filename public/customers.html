@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" sizes="192x192" href="icons/icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
   <title>客户管理 - AI-CRM 系统</title>
   <link rel="stylesheet" href="css/base.css">
   <script src="js/tiny-pinyin.min.js"></script>
@@ -12,6 +17,7 @@
   <script src="js/auth-guard.js"></script>
   <script src="js/customers.js"></script>
   <script src="js/navbar-loader.js"></script>
+  <script src="js/pwa-register.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 </head>
 <body x-data="themeManager()" x-init="init()" data-page="customers">
