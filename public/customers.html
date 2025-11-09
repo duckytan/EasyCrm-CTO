@@ -114,7 +114,7 @@
             <section class="section">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                 <h2 class="section-title" style="margin: 0;">客户列表 <span style="color: var(--color-text-muted); font-weight: 400; font-size: 0.875rem;">（共 <span x-text="pagination.total"></span> 条）</span></h2>
-                <button class="btn" style="padding: 10px 16px; font-size: 0.875rem;">
+                <button class="btn" style="padding: 10px 16px; font-size: 0.875rem;" @click="openCreateModal()">
                   <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"/>
                     <line x1="5" y1="12" x2="19" y2="12"/>
@@ -169,6 +169,7 @@
 
                     <div class="inline-actions">
                       <a :href="`customer-detail.html?id=${customer.id}`" class="btn" style="flex: 1; padding: 10px; font-size: 0.875rem;">查看详情</a>
+                      <button class="btn btn-ghost" style="flex: 1; padding: 10px; font-size: 0.875rem;" @click="openEditModal(customer)">编辑</button>
                       <button class="btn btn-ghost" style="padding: 10px; font-size: 0.875rem;" @click="deleteCustomer(customer.id, customer.name)">删除</button>
                     </div>
                   </div>
@@ -186,8 +187,157 @@
                   下一页
                 </button>
               </div>
-              </section>
+            </section>
+          </div>
+        </template>
 
+        <template x-if="showModal">
+          <div class="modal-overlay" x-transition @click.self="closeModal()">
+            <form class="modal-content" @submit.prevent="submitForm()">
+              <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                <h2 class="modal-title" x-text="modalMode === 'create' ? '新增客户' : '编辑客户'"></h2>
+                <button type="button" @click="closeModal()" style="background: none; border: none; color: var(--color-text-muted); cursor: pointer; padding: 4px;">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="modal-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="form-label required" for="customer-name">客户姓名</label>
+                    <input id="customer-name" type="text" class="input" placeholder="请输入客户姓名" x-model="formData.name">
+                    <template x-if="formErrors.name">
+                      <div class="form-error" x-text="formErrors.name"></div>
+                    </template>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label required" for="customer-phone">联系电话</label>
+                    <input id="customer-phone" type="text" class="input" placeholder="请输入联系电话" x-model="formData.phone">
+                    <template x-if="formErrors.phone">
+                      <div class="form-error" x-text="formErrors.phone"></div>
+                    </template>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-email">客户邮箱</label>
+                    <input id="customer-email" type="email" class="input" placeholder="请输入邮箱" x-model="formData.email">
+                    <template x-if="formErrors.email">
+                      <div class="form-error" x-text="formErrors.email"></div>
+                    </template>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-company">所在公司</label>
+                    <input id="customer-company" type="text" class="input" placeholder="请输入公司名称" x-model="formData.company">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-category">客户分类</label>
+                    <select id="customer-category" class="select" x-model="formData.customerCategoryId">
+                      <option value="">未分类</option>
+                      <template x-for="cat in categories" :key="cat.id">
+                        <option :value="cat.id" x-text="cat.name"></option>
+                      </template>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-intention">意向等级</label>
+                    <select id="customer-intention" class="select" x-model="formData.customerIntentionLevel">
+                      <option value="">未设置</option>
+                      <template x-for="intent in intentions" :key="intent.id">
+                        <option :value="intent.level" x-text="intent.name"></option>
+                      </template>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-region">所属地区</label>
+                    <select id="customer-region" class="select" x-model="formData.regionId">
+                      <option value="">未设置</option>
+                      <template x-for="region in regions" :key="region.id">
+                        <option :value="region.id" x-text="region.name"></option>
+                      </template>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-budget">预算范围</label>
+                    <select id="customer-budget" class="select" x-model="formData.budgetRangeId">
+                      <option value="">未设置</option>
+                      <template x-for="item in budgetRanges" :key="item.id">
+                        <option :value="item.id" x-text="item.name"></option>
+                      </template>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-address">联系地址</label>
+                    <input id="customer-address" type="text" class="input" placeholder="请输入联系地址" x-model="formData.address">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-birthday">生日</label>
+                    <input id="customer-birthday" type="date" class="input" x-model="formData.birthday">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-wechat">微信</label>
+                    <input id="customer-wechat" type="text" class="input" placeholder="微信号" x-model="formData.wechat">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="customer-whatsapp">WhatsApp</label>
+                    <input id="customer-whatsapp" type="text" class="input" placeholder="WhatsApp账号" x-model="formData.whatsapp">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="planned-visit-date">计划回访日期</label>
+                    <input id="planned-visit-date" type="date" class="input" x-model="formData.plannedVisitDate">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="planned-visit-method">计划回访方式</label>
+                    <select id="planned-visit-method" class="select" x-model="formData.plannedVisitMethodId">
+                      <option value="">未设置</option>
+                      <template x-for="method in visitMethods" :key="method.id">
+                        <option :value="method.id" x-text="method.name"></option>
+                      </template>
+                    </select>
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label class="form-label" for="customer-demand">客户需求</label>
+                    <textarea id="customer-demand" class="textarea" rows="3" placeholder="简要描述客户需求" x-model="formData.demand"></textarea>
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label class="form-label" for="planned-visit-content">回访计划内容</label>
+                    <textarea id="planned-visit-content" class="textarea" rows="3" placeholder="请输入回访计划内容" x-model="formData.plannedVisitContent"></textarea>
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label class="form-label" for="customer-remark">备注信息</label>
+                    <textarea id="customer-remark" class="textarea" rows="3" placeholder="其他补充说明" x-model="formData.remark"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-ghost" @click="closeModal()" :disabled="modalLoading">取消</button>
+                <button type="submit" class="btn" :disabled="modalLoading">
+                  <span x-show="!modalLoading">保存</span>
+                  <span x-show="modalLoading">正在保存...</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </template>
+      </main>
     </div>
   </div>
 </body>
