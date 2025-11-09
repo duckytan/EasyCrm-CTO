@@ -14,6 +14,7 @@
   <script src="js/tiny-pinyin.min.js"></script>
   <script src="js/app.js"></script>
   <script src="js/api-client.js"></script>
+  <script src="js/preview-mode.js"></script>
   <script src="js/pwa-register.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 </head>
@@ -53,13 +54,30 @@
           loading = false;
           return;
         }
+        // 尝试调用后端 API 登录
+        apiClient.setPreviewMode(false);
         apiClient.login(username, password)
           .then(() => {
             window.location.href = 'dashboard.html';
           })
           .catch((err) => {
-            error = err.message || '登录失败，请检查用户名和密码';
-            loading = false;
+            // 如果 API 不可用（如在 GitHub Pages 上），回退到预览模式
+            const isFetchError = err.message && (
+              err.message.includes('Failed to fetch') || 
+              err.message.includes('NetworkError') || 
+              err.message.includes('fetch') ||
+              err.message.toLowerCase().includes('network')
+            );
+            
+            if (isFetchError) {
+              console.log('后端 API 不可用，进入预览模式');
+              // 预览模式：允许任意登录
+              apiClient.setPreviewMode(true);
+              window.location.href = 'dashboard.html';
+            } else {
+              error = err.message || '登录失败，请检查用户名和密码';
+              loading = false;
+            }
           });
       ">
         <div x-show="error" x-transition class="tag tag-warning" style="width: 100%; justify-content: center;">
@@ -109,8 +127,8 @@
       </form>
 
       <div class="login-footer">
-        <p style="margin-bottom: 8px;">💡 预览模式：输入任意用户名和密码即可登录</p>
-        <p>默认账户：admin / admin123</p>
+        <p style="margin-bottom: 8px;">💡 如后端API可用，请使用：admin / admin123</p>
+        <p>如无后端API（如GitHub Pages），输入任意账号即可进入演示模式</p>
       </div>
     </div>
   </div>

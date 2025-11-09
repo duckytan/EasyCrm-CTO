@@ -5,6 +5,7 @@ class ApiClient {
   constructor() {
     this.accessToken = this.getStoredToken('accessToken');
     this.refreshToken = this.getStoredToken('refreshToken');
+    this.previewMode = this.getPreviewMode();
   }
 
   getStoredToken(key) {
@@ -40,10 +41,32 @@ class ApiClient {
     this.refreshToken = null;
     this.setStoredToken('accessToken', null);
     this.setStoredToken('refreshToken', null);
+    this.setPreviewMode(false);
+  }
+
+  getPreviewMode() {
+    try {
+      return localStorage.getItem('previewMode') === 'true';
+    } catch (error) {
+      return false;
+    }
+  }
+
+  setPreviewMode(enabled) {
+    try {
+      if (enabled) {
+        localStorage.setItem('previewMode', 'true');
+      } else {
+        localStorage.removeItem('previewMode');
+      }
+      this.previewMode = enabled;
+    } catch (error) {
+      console.warn('无法设置预览模式', error);
+    }
   }
 
   isAuthenticated() {
-    return !!this.accessToken;
+    return !!this.accessToken || this.previewMode;
   }
 
   async request(endpoint, options = {}) {
@@ -71,22 +94,39 @@ class ApiClient {
           headers['Authorization'] = `Bearer ${this.accessToken}`;
           const retryResponse = await fetch(url, { ...config, headers });
           if (!retryResponse.ok) {
-            throw new Error(retryResponse.statusText);
+            const retryErrorData = await retryResponse.json().catch(() => ({}));
+            const retryError = new Error(retryErrorData.message || retryErrorData.error || retryResponse.statusText);
+            retryError.status = retryResponse.status;
+            retryError.data = retryErrorData;
+            throw retryError;
           }
-          return await retryResponse.json();
+          if (retryResponse.status === 204) {
+            return null;
+          }
+          return await retryResponse.json().catch(() => ({}));
         } else {
           this.clearTokens();
           window.location.href = '/index.html';
-          throw new Error('认证失败，请重新登录');
+          const authError = new Error('认证失败，请重新登录');
+          authError.status = 401;
+          throw authError;
         }
       }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || errorData.error || response.statusText);
+        const message = errorData.message || errorData.error || response.statusText;
+        const error = new Error(message);
+        error.status = response.status;
+        error.data = errorData;
+        throw error;
       }
 
-      return await response.json();
+      if (response.status === 204) {
+        return null;
+      }
+
+      return await response.json().catch(() => ({}));
     } catch (error) {
       console.error('API请求失败:', error);
       throw error;
