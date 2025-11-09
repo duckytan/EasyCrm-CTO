@@ -62,20 +62,24 @@
           })
           .catch((err) => {
             // 如果 API 不可用（如在 GitHub Pages 上），回退到预览模式
-            const isFetchError = err.message && (
-              err.message.includes('Failed to fetch') || 
-              err.message.includes('NetworkError') || 
-              err.message.includes('fetch') ||
-              err.message.toLowerCase().includes('network')
-            );
-            
-            if (isFetchError) {
-              console.log('后端 API 不可用，进入预览模式');
+            const status = typeof err === 'object' && err ? err.status : undefined;
+            const message = typeof err === 'object' && err && typeof err.message === 'string' ? err.message : '';
+            const normalizedMessage = message.toLowerCase();
+            const isFetchError =
+              normalizedMessage.includes('failed to fetch') ||
+              normalizedMessage.includes('networkerror') ||
+              normalizedMessage.includes('network request failed') ||
+              normalizedMessage.includes('fetch') ||
+              normalizedMessage.includes('network');
+            const isApiUnavailableStatus = typeof status === 'number' && [404, 502, 503, 504].includes(status);
+
+            if (isFetchError || isApiUnavailableStatus) {
+              console.log('后端 API 不可用，进入预览模式', err);
               // 预览模式：允许任意登录
               apiClient.setPreviewMode(true);
               window.location.href = 'dashboard.html';
             } else {
-              error = err.message || '登录失败，请检查用户名和密码';
+              error = message || '登录失败，请检查用户名和密码';
               loading = false;
             }
           });
