@@ -32,8 +32,12 @@ npm run dev
 ## 📚 文档导航
 
 ### 核心文档
-- [部署指南](docs/DEPLOYMENT.md) - 完整的生产部署说明
+- [部署文档导航](docs/部署指南导航.md) - 帮你选择合适的部署资料
+- [🚀 Vercel 快速部署（小白版）](docs/VERCEL_QUICK_START.md) - **推荐新手！** 30分钟快速上手
+- [部署检查清单](docs/DEPLOYMENT_CHECKLIST.md) - 勾选式追踪部署进度
+- [Vercel 部署速查表](docs/QUICK_REFERENCE.md) - 一页纸快速参考
 - [Vercel 部署详细教程](docs/Vercel部署详细教程.md) - 零基础图文部署流程
+- [部署指南](docs/DEPLOYMENT.md) - 完整的生产部署说明
 - [开发指南](DEVELOPMENT.md) - 本地开发和调试说明
 - [前端文档](docs/FRONTEND.md) - 前端页面和组件说明
 
@@ -139,8 +143,11 @@ vercel --prod
 ```
 
 详细部署步骤请查看：
-- **新手推荐**：[Vercel 部署详细教程](docs/Vercel部署详细教程.md) - 从零开始的图文教程
-- **快速参考**：[部署指南](docs/DEPLOYMENT.md) - 简明部署流程
+- **完全小白**：[🚀 Vercel 快速部署（小白版）](docs/VERCEL_QUICK_START.md) - 手把手 30 分钟上线
+- **进度追踪**：[部署检查清单](docs/DEPLOYMENT_CHECKLIST.md) - 勾选式部署跟踪
+- **快速查阅**：[Vercel 部署速查表](docs/QUICK_REFERENCE.md) - 一页纸速查
+- **详细图文**：[Vercel 部署详细教程](docs/Vercel部署详细教程.md) - 全流程详解
+- **技术向**：[部署指南](docs/DEPLOYMENT.md) - 完整技术文档
 
 ## 📝 API 端点
 
