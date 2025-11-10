@@ -17,9 +17,71 @@
   <script src="js/preview-mode.js"></script>
   <script src="js/pwa-register.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+  <style>
+    .install-badge {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .install-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(102, 126, 234, 0.45);
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .install-icon {
+      font-size: 1.2rem;
+    }
+    @media (max-width: 640px) {
+      .install-badge {
+        top: 10px;
+        right: 10px;
+        padding: 10px 16px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="login-shell" x-data="themeManager()" x-init="init()">
+  <div class="login-shell" x-data="{ ...themeManager(), showInstall: false, checkingInstall: true }" x-init="
+    init();
+    // 检查安装状态
+    fetch('/api/install/check-status')
+      .then(res => res.json())
+      .then(data => {
+        showInstall = !data.installed;
+      })
+      .catch(() => {
+        showInstall = true;
+      })
+      .finally(() => {
+        checkingInstall = false;
+      });
+  ">
+    <template x-if="!checkingInstall && showInstall">
+      <a href="install.html" class="install-badge" x-transition.opacity.duration.300ms>
+        <span class="install-icon">🚀</span>
+        <span>首次安装向导</span>
+      </a>
+    </template>
+
     <div class="dark-toggle">
       <button class="theme-toggle" @click="toggle()" type="button">
         <svg x-show="theme === 'light'" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
