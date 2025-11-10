@@ -4,6 +4,7 @@
   "private": true,
   "description": "AI-CRM Serverless 重构项目的后端与管理脚手架",
   "scripts": {
+    "install-wizard": "tsx install.ts",
     "dev": "vercel dev",
     "build": "tsc --noEmit",
     "lint": "eslint \"**/*.{ts,tsx}\" --max-warnings=0",
