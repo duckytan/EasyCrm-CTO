@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" sizes="192x192" href="icons/icon-192x192.png">
+  <title>项目安装 - AI-CRM 系统</title>
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    }
+    [x-cloak] {
+    display: none !important;
+    }
+    .install-container {
+      max-width: 700px;
+      width: 100%;
+      background: var(--color-bg-primary);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 2.5rem;
+      animation: slideUp 0.5s ease-out;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .install-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .install-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-text-primary);
+    }
+    .subtitle {
+      color: var(--color-text-secondary);
+      font-size: 1.05rem;
+    }
+    .instruction-box {
+      background: var(--color-bg-secondary);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-radius: 50%;
+      font-weight: 700;
+      margin-right: 0.75rem;
+    }
+    .step {
+      display: flex;
+      align-items: start;
+      margin-bottom: 1.5rem;
+    }
+    .step:last-child {
+      margin-bottom: 0;
+    }
+    .step-content {
+      flex: 1;
+    }
+    .step-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--color-text-primary);
+      font-size: 1.05rem;
+    }
+    .step-desc {
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+    .command-box {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      margin-top: 0.75rem;
+      position: relative;
+      overflow-x: auto;
+    }
+    .command-box::before {
+      content: '$';
+      color: #10b981;
+      margin-right: 0.5rem;
+      font-weight: bold;
+    }
+    .alert {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid #f59e0b;
+      padding: 1.25rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .alert-title {
+      font-weight: 600;
+      color: #d97706;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .alert-content {
+      color: var(--color-text-primary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .alert-content ul {
+      margin: 0.5rem 0 0 1.25rem;
+      padding: 0;
+    }
+    .alert-content li {
+      margin-bottom: 0.25rem;
+    }
+    .install-lock {
+      background: rgba(15, 23, 42, 0.85);
+      color: white;
+      border-radius: 14px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(15, 23, 42, 0.45);
+      margin-top: 1.5rem;
+      animation: fadeIn 0.4s ease;
+    }
+    .lock-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .install-lock h2 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1.5rem;
+    }
+    .install-lock p {
+      margin: 0 0 1.25rem 0;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--color-border);
+    }
+    .btn-secondary {
+      background: var(--color-bg-secondary);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
+    }
+    .btn-secondary:hover {
+      background: var(--color-bg-tertiary, #374151);
+    }
+  </style>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+</head>
+<body>
+  <div class="install-container" x-data="{ installed: false, checking: true }" x-init="
+    fetch('/api/install/check-status')
+      .then(res => res.json())
+      .then(data => {
+        installed = data.installed;
+      })
+      .catch(() => {
+        installed = false;
+      })
+      .finally(() => {
+        checking = false;
+      });
+  ">
+    <div class="install-header">
+      <div class="install-icon">🚀</div>
+      <h1>AI-CRM 项目安装</h1>
+      <p class="subtitle">欢迎！使用安装向导快速配置项目</p>
+    </div>
+
+    <template x-if="installed">
+      <div class="install-lock">
+        <div class="lock-icon">🔒</div>
+        <h2>项目已完成安装</h2>
+        <p>检测到系统已安装并配置完成，安装向导已锁定。如需重新安装，请先清空数据库。</p>
+        <a href="index.html" class="btn" style="display: inline-block; color: white;">返回登录</a>
+      </div>
+    </template>
+
+    <div x-show="!installed && !checking" x-cloak>
+      <div class="alert">
+        <div class="alert-title">
+          <span>⚠️</span>
+          <span>安装前请确保</span>
+        </div>
+        <div class="alert-content">
+          <ul>
+            <li>已安装 <strong>Node.js 18+</strong> 和 npm</li>
+            <li>已安装并启动 <strong>PostgreSQL</strong> 数据库</li>
+            <li>已创建空数据库（如：ai_crm）</li>
+            <li>已准备数据库连接信息</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="instruction-box">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <div class="step-title">打开终端并进入项目目录</div>
+            <div class="step-desc">使用命令行工具（Terminal/CMD/PowerShell）导航到项目根目录</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <div class="step-title">安装项目依赖</div>
+            <div class="step-desc">首次运行需要先安装依赖包</div>
+            <div class="command-box">npm install</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <div class="step-title">运行安装向导</div>
+            <div class="step-desc">启动交互式安装向导，按提示输入配置信息</div>
+            <div class="command-box">npm run install-wizard</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <div class="step-title">按提示完成配置</div>
+            <div class="step-desc">
+              安装向导会询问数据库连接信息、JWT密钥（可自动生成）、项目信息和管理员账户等配置，按提示输入即可。
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <div class="step-title">启动开发服务器</div>
+            <div class="step-desc">安装完成后，启动本地开发服务器</div>
+            <div class="command-box">npm run dev</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a href="index.html" class="btn btn-secondary">返回登录</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
