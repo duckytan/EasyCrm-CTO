@@ -6,27 +6,29 @@
   <meta name="theme-color" content="#2563eb">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" sizes="192x192" href="icons/icon-192x192.png">
-  <title>项目安装 - AI-CRM 系统</title>
+  <title>系统安装向导 - AI-CRM</title>
   <link rel="stylesheet" href="css/base.css">
   <style>
     body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
     }
     [x-cloak] {
-    display: none !important;
+      display: none !important;
+    }
+    .install-wrapper {
+      max-width: 900px;
+      width: 100%;
     }
     .install-container {
-      max-width: 700px;
-      width: 100%;
       background: var(--color-bg-primary);
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      padding: 2.5rem;
+      overflow: hidden;
       animation: slideUp 0.5s ease-out;
     }
     @keyframes slideUp {
@@ -34,242 +36,756 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .install-header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .install-icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-    }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      color: var(--color-text-primary);
-    }
-    .subtitle {
-      color: var(--color-text-secondary);
-      font-size: 1.05rem;
-    }
-    .instruction-box {
-      background: var(--color-bg-secondary);
-      border-radius: 12px;
-      padding: 2rem;
-      margin-bottom: 1.5rem;
-    }
-    .step-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      border-radius: 50%;
-      font-weight: 700;
-      margin-right: 0.75rem;
+      padding: 2rem;
+      text-align: center;
     }
-    .step {
-      display: flex;
-      align-items: start;
-      margin-bottom: 1.5rem;
+    .install-header h1 {
+      font-size: 2rem;
+      margin: 0 0 0.5rem 0;
+      color: white;
     }
-    .step:last-child {
-      margin-bottom: 0;
-    }
-    .step-content {
-      flex: 1;
-    }
-    .step-title {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--color-text-primary);
+    .install-header p {
+      margin: 0;
+      opacity: 0.95;
       font-size: 1.05rem;
     }
-    .step-desc {
-      color: var(--color-text-secondary);
-      line-height: 1.6;
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      padding: 1.5rem 2rem;
+      background: var(--color-bg-secondary);
+      border-bottom: 1px solid var(--color-border);
     }
-    .command-box {
-      background: #1e293b;
-      color: #e2e8f0;
-      padding: 1rem 1.25rem;
-      border-radius: 8px;
-      font-family: 'Courier New', monospace;
-      font-size: 1rem;
-      margin-top: 0.75rem;
-      position: relative;
-      overflow-x: auto;
-    }
-    .command-box::before {
-      content: '$';
-      color: #10b981;
-      margin-right: 0.5rem;
-      font-weight: bold;
-    }
-    .alert {
-      background: rgba(245, 158, 11, 0.1);
-      border-left: 4px solid #f59e0b;
-      padding: 1.25rem;
-      border-radius: 8px;
-      margin-bottom: 1.5rem;
-    }
-    .alert-title {
-      font-weight: 600;
-      color: #d97706;
-      margin-bottom: 0.5rem;
+    .step-item {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      margin: 0 1rem;
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
     }
-    .alert-content {
+    .step-item.active {
+      color: #667eea;
+      font-weight: 600;
+    }
+    .step-item.completed {
+      color: #10b981;
+    }
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--color-bg-tertiary, #374151);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .step-item.active .step-number {
+      background: #667eea;
+      color: white;
+    }
+    .step-item.completed .step-number {
+      background: #10b981;
+      color: white;
+    }
+    .install-content {
+      padding: 2.5rem;
+      min-height: 400px;
+    }
+    .step-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
       color: var(--color-text-primary);
-      font-size: 0.95rem;
+    }
+    .step-desc {
+      color: var(--color-text-secondary);
+      margin-bottom: 2rem;
       line-height: 1.6;
     }
-    .alert-content ul {
-      margin: 0.5rem 0 0 1.25rem;
-      padding: 0;
+    .form-group {
+      margin-bottom: 1.5rem;
     }
-    .alert-content li {
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .form-label .required {
+      color: #ef4444;
+      margin-left: 0.25rem;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-size: 1rem;
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      transition: all 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .form-input.error {
+      border-color: #ef4444;
+    }
+    .form-error {
+      color: #ef4444;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    .form-hint {
+      color: var(--color-text-secondary);
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 640px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+    }
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid #10b981;
+      color: #10b981;
+    }
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid #f59e0b;
+      color: #d97706;
+    }
+    .alert-info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid #3b82f6;
+      color: #2563eb;
+    }
+    .check-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+    }
+    .check-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+    }
+    .check-icon.success {
+      background: #10b981;
+      color: white;
+    }
+    .check-icon.error {
+      background: #ef4444;
+      color: white;
+    }
+    .check-icon.loading {
+      background: #6b7280;
+      color: white;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .check-content {
+      flex: 1;
+    }
+    .check-title {
+      font-weight: 500;
+      color: var(--color-text-primary);
       margin-bottom: 0.25rem;
     }
-    .install-lock {
-      background: rgba(15, 23, 42, 0.85);
-      color: white;
-      border-radius: 14px;
-      padding: 2rem;
-      text-align: center;
-      box-shadow: 0 15px 40px rgba(15, 23, 42, 0.45);
-      margin-top: 1.5rem;
-      animation: fadeIn 0.4s ease;
+    .check-desc {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
     }
-    .lock-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    .install-lock h2 {
-      margin: 0 0 0.75rem 0;
-      font-size: 1.5rem;
-    }
-    .install-lock p {
-      margin: 0 0 1.25rem 0;
-      color: rgba(255, 255, 255, 0.85);
-    }
-    .actions {
+    .install-actions {
       display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 2rem;
-      padding-top: 2rem;
+      justify-content: space-between;
+      padding: 1.5rem 2.5rem;
+      background: var(--color-bg-secondary);
       border-top: 1px solid var(--color-border);
     }
     .btn-secondary {
-      background: var(--color-bg-secondary);
+      background: var(--color-bg-tertiary, #374151);
       color: var(--color-text-primary);
       border: 1px solid var(--color-border);
     }
-    .btn-secondary:hover {
-      background: var(--color-bg-tertiary, #374151);
+    .btn-secondary:hover:not(:disabled) {
+      background: #4b5563;
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .progress-steps {
+      margin: 2rem 0;
+    }
+    .progress-step {
+      display: flex;
+      align-items: start;
+      gap: 1rem;
+      padding: 1rem;
+      border-left: 3px solid var(--color-border);
+      margin-bottom: 1rem;
+    }
+    .progress-step.success {
+      border-left-color: #10b981;
+    }
+    .progress-step.error {
+      border-left-color: #ef4444;
+    }
+    .progress-step.pending {
+      border-left-color: #6b7280;
+    }
+    .progress-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+    .progress-icon.success {
+      background: #10b981;
+      color: white;
+    }
+    .progress-icon.error {
+      background: #ef4444;
+      color: white;
+    }
+    .progress-icon.pending {
+      background: #6b7280;
+      color: white;
+    }
+    .progress-icon.loading {
+      background: #3b82f6;
+      color: white;
+      animation: spin 1s linear infinite;
+    }
+    .success-icon {
+      font-size: 4rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .install-lock {
+      text-align: center;
+      padding: 2rem 0;
+    }
+    .lock-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
     }
   </style>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 </head>
 <body>
-  <div class="install-container" x-data="{ installed: false, checking: true }" x-init="
-    fetch('/api/install/check-status')
-      .then(res => res.json())
-      .then(data => {
-        installed = data.installed;
-      })
-      .catch(() => {
-        installed = false;
-      })
-      .finally(() => {
-        checking = false;
-      });
-  ">
-    <div class="install-header">
-      <div class="install-icon">🚀</div>
-      <h1>AI-CRM 项目安装</h1>
-      <p class="subtitle">欢迎！使用安装向导快速配置项目</p>
-    </div>
-
-    <template x-if="installed">
-      <div class="install-lock">
-        <div class="lock-icon">🔒</div>
-        <h2>项目已完成安装</h2>
-        <p>检测到系统已安装并配置完成，安装向导已锁定。如需重新安装，请先清空数据库。</p>
-        <a href="index.html" class="btn" style="display: inline-block; color: white;">返回登录</a>
-      </div>
-    </template>
-
-    <div x-show="!installed && !checking" x-cloak>
-      <div class="alert">
-        <div class="alert-title">
-          <span>⚠️</span>
-          <span>安装前请确保</span>
-        </div>
-        <div class="alert-content">
-          <ul>
-            <li>已安装 <strong>Node.js 18+</strong> 和 npm</li>
-            <li>已安装并启动 <strong>PostgreSQL</strong> 数据库</li>
-            <li>已创建空数据库（如：ai_crm）</li>
-            <li>已准备数据库连接信息</li>
-          </ul>
-        </div>
+  <div class="install-wrapper" x-data="installWizard()" x-init="init()">
+    <div class="install-container" x-show="!checking" x-cloak>
+      <div class="install-header">
+        <h1>🚀 AI-CRM 系统安装向导</h1>
+        <p>欢迎！让我们一起完成系统安装配置</p>
       </div>
 
-      <div class="instruction-box">
-        <div class="step">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <div class="step-title">打开终端并进入项目目录</div>
-            <div class="step-desc">使用命令行工具（Terminal/CMD/PowerShell）导航到项目根目录</div>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <div class="step-title">安装项目依赖</div>
-            <div class="step-desc">首次运行需要先安装依赖包</div>
-            <div class="command-box">npm install</div>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <div class="step-title">运行安装向导</div>
-            <div class="step-desc">启动交互式安装向导，按提示输入配置信息</div>
-            <div class="command-box">npm run install-wizard</div>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-number">4</div>
-          <div class="step-content">
-            <div class="step-title">按提示完成配置</div>
-            <div class="step-desc">
-              安装向导会询问数据库连接信息、JWT密钥（可自动生成）、项目信息和管理员账户等配置，按提示输入即可。
+      <template x-if="installed">
+        <div>
+          <div class="install-content">
+            <div class="install-lock">
+              <div class="lock-icon">🔒</div>
+              <h2 class="step-title">系统已安装</h2>
+              <p class="step-desc">检测到系统已安装并配置完成，安装向导已锁定。<br>如需重新安装，请先清空数据库。</p>
+              <a href="index.html" class="btn">返回登录</a>
             </div>
           </div>
         </div>
+      </template>
 
-        <div class="step">
-          <div class="step-number">5</div>
-          <div class="step-content">
-            <div class="step-title">启动开发服务器</div>
-            <div class="step-desc">安装完成后，启动本地开发服务器</div>
-            <div class="command-box">npm run dev</div>
+      <template x-if="!installed">
+        <div>
+          <div class="step-indicator">
+            <div class="step-item" :class="{ 'active': step === 1, 'completed': step > 1 }">
+              <div class="step-number">1</div>
+              <span>环境检查</span>
+            </div>
+            <div class="step-item" :class="{ 'active': step === 2, 'completed': step > 2 }">
+              <div class="step-number">2</div>
+              <span>数据库配置</span>
+            </div>
+            <div class="step-item" :class="{ 'active': step === 3, 'completed': step > 3 }">
+              <div class="step-number">3</div>
+              <span>系统设置</span>
+            </div>
+            <div class="step-item" :class="{ 'active': step === 4, 'completed': step > 4 }">
+              <div class="step-number">4</div>
+              <span>执行安装</span>
+            </div>
+            <div class="step-item" :class="{ 'active': step === 5 }">
+              <div class="step-number">5</div>
+              <span>安装完成</span>
+            </div>
+          </div>
+
+          <div class="install-content">
+            <!-- 步骤1: 环境检查 -->
+            <div x-show="step === 1">
+              <h2 class="step-title">环境检查</h2>
+              <p class="step-desc">正在检查系统运行环境是否满足安装要求...</p>
+
+              <ul class="check-list">
+                <template x-for="(check, key) in envChecks" :key="key">
+                  <li class="check-item">
+                    <div class="check-icon" :class="check.passed ? 'success' : 'error'">
+                      <span x-text="check.passed ? '✓' : '✗'"></span>
+                    </div>
+                    <div class="check-content">
+                      <div class="check-title" x-text="check.required"></div>
+                      <div class="check-desc" x-text="check.message"></div>
+                    </div>
+                  </li>
+                </template>
+              </ul>
+
+              <template x-if="!envCheckPassed">
+                <div class="alert alert-error">
+                  <span>⚠️</span>
+                  <span>环境检查未通过，请修复上述问题后重试。</span>
+                </div>
+              </template>
+            </div>
+
+            <!-- 步骤2: 数据库配置 -->
+            <div x-show="step === 2">
+              <h2 class="step-title">数据库配置</h2>
+              <p class="step-desc">请配置 PostgreSQL 数据库连接信息，系统将使用此数据库存储数据。</p>
+
+              <div class="alert alert-info" x-show="!dbTestResult">
+                <span>💡</span>
+                <span>请确保已创建空的 PostgreSQL 数据库。配置完成后可测试连接。</span>
+              </div>
+
+              <div class="alert alert-success" x-show="dbTestResult === 'success'">
+                <span>✓</span>
+                <span>数据库连接测试成功！</span>
+              </div>
+
+              <div class="alert alert-error" x-show="dbTestResult === 'error'">
+                <span>✗</span>
+                <span x-text="dbTestError"></span>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">数据库主机<span class="required">*</span></label>
+                  <input type="text" class="form-input" x-model="database.host" placeholder="localhost">
+                  <div class="form-hint">本地开发使用 localhost</div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">端口<span class="required">*</span></label>
+                  <input type="number" class="form-input" x-model.number="database.port" placeholder="5432">
+                  <div class="form-hint">PostgreSQL 默认端口 5432</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">数据库名称<span class="required">*</span></label>
+                <input type="text" class="form-input" x-model="database.database" placeholder="ai_crm">
+                <div class="form-hint">请先在 PostgreSQL 中创建此数据库</div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">用户名<span class="required">*</span></label>
+                  <input type="text" class="form-input" x-model="database.username" placeholder="postgres">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">密码</label>
+                  <input type="password" class="form-input" x-model="database.password" placeholder="数据库密码">
+                </div>
+              </div>
+
+              <button @click="testDatabase" class="btn" style="margin-top: 1rem;" :disabled="dbTesting">
+                <span x-show="!dbTesting">🔍 测试数据库连接</span>
+                <span x-show="dbTesting">测试中...</span>
+              </button>
+            </div>
+
+            <!-- 步骤3: 系统设置 -->
+            <div x-show="step === 3">
+              <h2 class="step-title">系统设置</h2>
+              <p class="step-desc">配置系统基本信息和管理员账户。</p>
+
+              <h3 style="font-size: 1.1rem; margin: 2rem 0 1rem 0; color: var(--color-text-primary);">📝 系统信息</h3>
+              
+              <div class="form-group">
+                <label class="form-label">系统名称</label>
+                <input type="text" class="form-input" x-model="system.projectName" placeholder="AI-CRM 智能客户管理系统">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">系统描述</label>
+                <input type="text" class="form-input" x-model="system.projectDescription" placeholder="基于AI的智能客户关系管理系统">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">访问地址</label>
+                <input type="url" class="form-input" x-model="system.projectUrl" placeholder="http://localhost:3000">
+                <div class="form-hint">系统访问URL（用于生成链接等）</div>
+              </div>
+
+              <h3 style="font-size: 1.1rem; margin: 2rem 0 1rem 0; color: var(--color-text-primary);">👤 管理员账户</h3>
+
+              <div class="form-group">
+                <label class="form-label">登录用户名<span class="required">*</span></label>
+                <input type="text" class="form-input" x-model="admin.username" placeholder="admin" 
+                       :class="{ 'error': adminErrors.username }">
+                <div class="form-error" x-show="adminErrors.username" x-text="adminErrors.username"></div>
+                <div class="form-hint" x-show="!adminErrors.username">3-20个字符，只能包含字母、数字和下划线</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">显示名称<span class="required">*</span></label>
+                <input type="text" class="form-input" x-model="admin.displayName" placeholder="系统管理员"
+                       :class="{ 'error': adminErrors.displayName }">
+                <div class="form-error" x-show="adminErrors.displayName" x-text="adminErrors.displayName"></div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">密码<span class="required">*</span></label>
+                  <input type="password" class="form-input" x-model="admin.password" placeholder="请输入密码"
+                         :class="{ 'error': adminErrors.password }">
+                  <div class="form-error" x-show="adminErrors.password" x-text="adminErrors.password"></div>
+                  <div class="form-hint" x-show="!adminErrors.password">至少6个字符</div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">确认密码<span class="required">*</span></label>
+                  <input type="password" class="form-input" x-model="adminPasswordConfirm" placeholder="再次输入密码"
+                         :class="{ 'error': adminErrors.passwordConfirm }">
+                  <div class="form-error" x-show="adminErrors.passwordConfirm" x-text="adminErrors.passwordConfirm"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 步骤4: 执行安装 -->
+            <div x-show="step === 4">
+              <h2 class="step-title">执行安装</h2>
+              <p class="step-desc">系统正在安装，请稍候...</p>
+
+              <div class="progress-steps">
+                <template x-for="(installStep, index) in installSteps" :key="index">
+                  <div class="progress-step" :class="installStep.status">
+                    <div class="progress-icon" :class="installStep.status">
+                      <span x-show="installStep.status === 'success'">✓</span>
+                      <span x-show="installStep.status === 'error'">✗</span>
+                      <span x-show="installStep.status === 'pending'">○</span>
+                      <span x-show="installStep.status === 'loading'">●</span>
+                    </div>
+                    <div>
+                      <div class="check-title" x-text="installStep.name"></div>
+                      <div class="check-desc" x-text="installStep.message"></div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
+              <div class="alert alert-error" x-show="installError">
+                <span>⚠️</span>
+                <div>
+                  <div style="font-weight: 600; margin-bottom: 0.25rem;">安装失败</div>
+                  <div x-text="installError"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 步骤5: 安装完成 -->
+            <div x-show="step === 5">
+              <div class="success-icon">🎉</div>
+              <h2 class="step-title" style="text-align: center;">安装完成！</h2>
+              <p class="step-desc" style="text-align: center;">
+                恭喜！AI-CRM 系统已成功安装。<br>
+                您现在可以使用刚才创建的管理员账户登录系统。
+              </p>
+
+              <div class="alert alert-success">
+                <span>✓</span>
+                <div>
+                  <div style="font-weight: 600; margin-bottom: 0.5rem;">登录信息</div>
+                  <div style="font-family: monospace;">
+                    用户名: <span x-text="admin.username"></span><br>
+                    密码: ******（您刚才设置的密码）
+                  </div>
+                </div>
+              </div>
+
+              <div style="text-align: center; margin-top: 2rem;">
+                <a href="index.html" class="btn">前往登录</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="install-actions" x-show="step < 5">
+            <button @click="prevStep" class="btn btn-secondary" :disabled="step === 1 || installing">
+              ← 上一步
+            </button>
+            <button @click="nextStep" class="btn" :disabled="!canProceed || installing">
+              <span x-show="step < 4">下一步 →</span>
+              <span x-show="step === 4">开始安装</span>
+            </button>
           </div>
         </div>
-      </div>
+      </template>
+    </div>
 
-      <div class="actions">
-        <a href="index.html" class="btn btn-secondary">返回登录</a>
-      </div>
+    <div x-show="checking" style="text-align: center; color: white;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+      <div style="font-size: 1.2rem;">正在检查安装状态...</div>
     </div>
   </div>
+
+  <script>
+    function installWizard() {
+      return {
+        checking: true,
+        installed: false,
+        step: 1,
+        installing: false,
+        
+        // 环境检查
+        envChecks: {},
+        envCheckPassed: false,
+        
+        // 数据库配置
+        database: {
+          host: 'localhost',
+          port: 5432,
+          database: 'ai_crm',
+          username: 'postgres',
+          password: ''
+        },
+        dbTesting: false,
+        dbTestResult: null,
+        dbTestError: '',
+        
+        // 系统配置
+        system: {
+          projectName: 'AI-CRM 智能客户管理系统',
+          projectDescription: '基于AI的智能客户关系管理系统',
+          projectUrl: window.location.origin
+        },
+        
+        // 管理员配置
+        admin: {
+          username: 'admin',
+          displayName: '系统管理员',
+          password: ''
+        },
+        adminPasswordConfirm: '',
+        adminErrors: {},
+        
+        // 安装步骤
+        installSteps: [
+          { name: '测试数据库连接', status: 'pending', message: '' },
+          { name: '创建环境配置文件', status: 'pending', message: '' },
+          { name: '初始化数据库结构', status: 'pending', message: '' },
+          { name: '创建管理员账户', status: 'pending', message: '' }
+        ],
+        installError: '',
+        
+        async init() {
+          try {
+            const res = await fetch('/api/install/check-status');
+            const data = await res.json();
+            this.installed = data.installed;
+            
+            if (!this.installed) {
+              await this.checkEnvironment();
+            }
+          } catch (error) {
+            console.error('检查安装状态失败:', error);
+          } finally {
+            this.checking = false;
+          }
+        },
+        
+        async checkEnvironment() {
+          try {
+            const res = await fetch('/api/install/check-env');
+            const data = await res.json();
+            this.envChecks = data.checks;
+            this.envCheckPassed = data.success;
+          } catch (error) {
+            console.error('环境检查失败:', error);
+            this.envCheckPassed = false;
+          }
+        },
+        
+        async testDatabase() {
+          this.dbTesting = true;
+          this.dbTestResult = null;
+          this.dbTestError = '';
+          
+          try {
+            const res = await fetch('/api/install/test-db', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(this.database)
+            });
+            
+            const data = await res.json();
+            
+            if (data.success) {
+              this.dbTestResult = 'success';
+            } else {
+              this.dbTestResult = 'error';
+              this.dbTestError = data.message || '数据库连接失败';
+            }
+          } catch (error) {
+            this.dbTestResult = 'error';
+            this.dbTestError = '请求失败: ' + error.message;
+          } finally {
+            this.dbTesting = false;
+          }
+        },
+        
+        validateAdmin() {
+          this.adminErrors = {};
+          let valid = true;
+          
+          if (!this.admin.username || !/^[a-zA-Z0-9_]{3,20}$/.test(this.admin.username)) {
+            this.adminErrors.username = '用户名格式无效（3-20个字符，只能包含字母、数字和下划线）';
+            valid = false;
+          }
+          
+          if (!this.admin.displayName || this.admin.displayName.trim().length === 0) {
+            this.adminErrors.displayName = '显示名称不能为空';
+            valid = false;
+          }
+          
+          if (!this.admin.password || this.admin.password.length < 6) {
+            this.adminErrors.password = '密码长度至少为6个字符';
+            valid = false;
+          }
+          
+          if (this.admin.password !== this.adminPasswordConfirm) {
+            this.adminErrors.passwordConfirm = '两次输入的密码不一致';
+            valid = false;
+          }
+          
+          return valid;
+        },
+        
+        async executeInstall() {
+          this.installing = true;
+          this.installError = '';
+          
+          this.installSteps.forEach(step => {
+            step.status = 'pending';
+            step.message = '';
+          });
+          
+          try {
+            const res = await fetch('/api/install/execute', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                database: this.database,
+                admin: this.admin,
+                system: this.system
+              })
+            });
+            
+            const data = await res.json();
+            
+            if (data.success && data.steps) {
+              this.installSteps = data.steps;
+              setTimeout(() => {
+                this.step = 5;
+              }, 1000);
+            } else {
+              this.installError = data.message || data.error || '安装失败，请检查配置';
+              this.installSteps[0].status = 'error';
+              this.installSteps[0].message = this.installError;
+            }
+          } catch (error) {
+            this.installError = '安装请求失败: ' + error.message;
+            this.installSteps[0].status = 'error';
+            this.installSteps[0].message = this.installError;
+          } finally {
+            this.installing = false;
+          }
+        },
+        
+        get canProceed() {
+          if (this.step === 1) {
+            return this.envCheckPassed;
+          } else if (this.step === 2) {
+            return this.dbTestResult === 'success';
+          } else if (this.step === 3) {
+            return this.validateAdmin();
+          }
+          return true;
+        },
+        
+        prevStep() {
+          if (this.step > 1) {
+            this.step--;
+          }
+        },
+        
+        async nextStep() {
+          if (this.step === 3) {
+            if (!this.validateAdmin()) {
+              return;
+            }
+          }
+          
+          if (this.step === 4) {
+            await this.executeInstall();
+          } else {
+            this.step++;
+          }
+        }
+      };
+    }
+  </script>
 </body>
 </html>
