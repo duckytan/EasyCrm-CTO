@@ -8,13 +8,20 @@ async function main() {
 
   // 创建默认管理员
   console.log('创建管理员账户...');
+  const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+  const adminDisplayName = process.env.ADMIN_DISPLAY_NAME || '系统管理员';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
   const adminManager = await prisma.manager.upsert({
-    where: { username: 'admin' },
-    update: {},
+    where: { username: adminUsername },
+    update: {
+      displayName: adminDisplayName,
+      passwordHash: await bcrypt.hash(adminPassword, 10),
+    },
     create: {
-      username: 'admin',
-      displayName: '系统管理员',
-      passwordHash: await bcrypt.hash('admin123', 10),
+      username: adminUsername,
+      displayName: adminDisplayName,
+      passwordHash: await bcrypt.hash(adminPassword, 10),
     },
   });
 

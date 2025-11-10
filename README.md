@@ -4,25 +4,35 @@
 
 ## 🚀 快速开始
 
-### 1. 安装依赖
+### ✅ 推荐：使用交互式安装向导
+```bash
+npm install
+npm run install-wizard
+```
+
+按照提示输入数据库、JWT、管理员等信息，安装向导会自动完成配置、迁移和数据初始化。
+
+### 🔧 手动安装步骤
+
+#### 1. 安装依赖
 ```bash
 npm install
 ```
 
-### 2. 配置环境变量
+#### 2. 配置环境变量
 ```bash
 cp .env.example .env
 # 编辑 .env 文件，填入数据库连接和 JWT 密钥
 ```
 
-### 3. 初始化数据库
+#### 3. 初始化数据库
 ```bash
 npm run prisma:generate
 npx prisma migrate deploy
 npm run prisma:seed
 ```
 
-### 4. 启动开发服务器
+#### 4. 启动开发服务器
 ```bash
 npm run dev
 ```
@@ -32,6 +42,7 @@ npm run dev
 ## 📚 文档导航
 
 ### 核心文档
+- [📦 安装指南](INSTALL.md) - **新手必看！** 交互式安装向导完整教程
 - [部署文档导航](docs/部署指南导航.md) - 帮你选择合适的部署资料
 - [🚀 Vercel 快速部署（小白版）](docs/VERCEL_QUICK_START.md) - **推荐新手！** 30分钟快速上手
 - [部署检查清单](docs/DEPLOYMENT_CHECKLIST.md) - 勾选式追踪部署进度

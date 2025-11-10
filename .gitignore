@@ -17,6 +17,9 @@ coverage/
 .env*.local
 .vercel
 
+# Install temporary files
+install-seed.ts
+
 # Prisma
 prisma/*.db
 prisma/*.db-journal
