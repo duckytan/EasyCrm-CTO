@@ -56,15 +56,14 @@ async function executeInstallHandler(
   const jwtRefreshSecret = jwt?.refreshSecret || generateSecret(64);
   
   let prisma: PrismaClient | null = null;
+  const steps: Array<{ name: string; status: 'pending' | 'success' | 'error'; message?: string }> = [
+    { name: '测试数据库连接', status: 'pending' },
+    { name: '创建环境配置文件', status: 'pending' },
+    { name: '初始化数据库结构', status: 'pending' },
+    { name: '创建管理员账户', status: 'pending' },
+  ];
   
   try {
-    const steps: Array<{ name: string; status: 'pending' | 'success' | 'error'; message?: string }> = [
-      { name: '测试数据库连接', status: 'pending' },
-      { name: '创建环境配置文件', status: 'pending' },
-      { name: '初始化数据库结构', status: 'pending' },
-      { name: '创建管理员账户', status: 'pending' },
-    ];
-    
     prisma = new PrismaClient({
       datasources: {
         db: {
@@ -168,10 +167,26 @@ ADMIN_PASSWORD="${admin.password}"
   } catch (error: any) {
     console.error('Installation error:', error);
     
+    // 即使失败也返回步骤状态，让用户知道在哪一步失败了
+    let errorMessage = '安装过程中出现错误';
+    
+    if (error.code === 'ECONNREFUSED') {
+      errorMessage = '无法连接到数据库服务器，请检查数据库配置';
+    } else if (error.message.includes('password authentication failed')) {
+      errorMessage = '数据库认证失败，请检查数据库用户名和密码';
+    } else if (error.message.includes('permission denied')) {
+      errorMessage = '权限不足，无法创建 .env 文件或执行数据库操作';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
     return res.status(500).json({
       success: false,
-      message: '安装过程中出现错误',
+      message: errorMessage,
       error: error.message,
+      steps: steps || [
+        { name: '安装失败', status: 'error', message: errorMessage }
+      ],
     });
   } finally {
     if (prisma) {

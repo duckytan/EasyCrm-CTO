@@ -192,12 +192,21 @@
     }
     .check-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.75rem;
       padding: 1rem;
       border: 1px solid var(--color-border);
       border-radius: 8px;
       margin-bottom: 0.75rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .check-item.success {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .check-item.error {
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.08);
     }
     .check-icon {
       width: 24px;
@@ -207,6 +216,7 @@
       align-items: center;
       justify-content: center;
       font-size: 0.875rem;
+      flex-shrink: 0;
     }
     .check-icon.success {
       background: #10b981;
@@ -217,9 +227,15 @@
       color: white;
     }
     .check-icon.loading {
-      background: #6b7280;
+      background: #3b82f6;
       color: white;
       animation: spin 1s linear infinite;
+    }
+    .check-detail {
+      margin-top: 0.25rem;
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
@@ -370,24 +386,82 @@
               <h2 class="step-title">环境检查</h2>
               <p class="step-desc">正在检查系统运行环境是否满足安装要求...</p>
 
-              <ul class="check-list">
-                <template x-for="(check, key) in envChecks" :key="key">
-                  <li class="check-item">
-                    <div class="check-icon" :class="check.passed ? 'success' : 'error'">
-                      <span x-text="check.passed ? '✓' : '✗'"></span>
-                    </div>
-                    <div class="check-content">
-                      <div class="check-title" x-text="check.required"></div>
-                      <div class="check-desc" x-text="check.message"></div>
-                    </div>
-                  </li>
-                </template>
-              </ul>
+              <!-- 加载状态 -->
+              <template x-if="envCheckLoading">
+                <div class="alert alert-info">
+                  <span>⏳</span>
+                  <span>正在检查环境...</span>
+                </div>
+              </template>
 
-              <template x-if="!envCheckPassed">
+              <!-- API 请求失败时的错误提示 -->
+              <template x-if="envCheckError && !envCheckLoading">
                 <div class="alert alert-error">
                   <span>⚠️</span>
-                  <span>环境检查未通过，请修复上述问题后重试。</span>
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">无法获取环境检查结果</div>
+                    <div x-text="envCheckError" style="margin-bottom: 0.5rem;"></div>
+                    <button @click="checkEnvironment" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-top: 0.5rem;" :disabled="envCheckLoading">
+                      <span x-show="!envCheckLoading">🔄 重新检查</span>
+                      <span x-show="envCheckLoading">检查中...</span>
+                    </button>
+                  </div>
+                </div>
+              </template>
+
+              <!-- 检查结果列表 -->
+              <template x-if="!envCheckLoading && !envCheckError">
+                <div>
+                  <!-- 汇总信息 -->
+                  <template x-if="envCheckSummary">
+                    <div class="alert" :class="envCheckPassed ? 'alert-success' : 'alert-warning'" style="margin-bottom: 1rem;">
+                      <span x-text="envCheckPassed ? '✓' : 'ℹ️'"></span>
+                      <div>
+                        <span x-text="`检查完成: ${envCheckSummary.passed}/${envCheckSummary.total} 项通过`"></span>
+                        <template x-if="!envCheckPassed">
+                          <span x-text="`, ${envCheckSummary.failed} 项需要处理`"></span>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+
+                  <ul class="check-list">
+                    <template x-for="check in envChecks" :key="check.key">
+                      <li class="check-item" :class="check.passed ? 'success' : 'error'">
+                        <div class="check-icon" :class="check.passed ? 'success' : 'error'">
+                          <span x-text="check.passed ? '✓' : '✗'"></span>
+                        </div>
+                        <div class="check-content">
+                          <div class="check-title" x-text="check.required"></div>
+                          <div class="check-desc" x-text="check.message"></div>
+                          <div class="check-detail" x-show="check.detail" x-text="check.detail"></div>
+                        </div>
+                      </li>
+                    </template>
+                  </ul>
+
+                  <!-- 检查未通过的提示 -->
+                  <template x-if="!envCheckPassed">
+                    <div class="alert alert-error">
+                      <span>⚠️</span>
+                      <div>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">环境检查未通过</div>
+                        <div style="margin-bottom: 0.5rem;">请根据上述提示修复环境问题后，点击下方按钮重新检查。</div>
+                        <button @click="checkEnvironment" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-top: 0.5rem;" :disabled="envCheckLoading">
+                          <span x-show="!envCheckLoading">🔄 重新检查</span>
+                          <span x-show="envCheckLoading">检查中...</span>
+                        </button>
+                      </div>
+                    </div>
+                  </template>
+
+                  <!-- 检查通过的提示 -->
+                  <template x-if="envCheckPassed">
+                    <div class="alert alert-success">
+                      <span>✓</span>
+                      <span>环境检查全部通过，可以继续进行安装！</span>
+                    </div>
+                  </template>
                 </div>
               </template>
             </div>
@@ -409,7 +483,10 @@
 
               <div class="alert alert-error" x-show="dbTestResult === 'error'">
                 <span>✗</span>
-                <span x-text="dbTestError"></span>
+                <div>
+                  <div style="font-weight: 600; margin-bottom: 0.25rem;">数据库连接测试失败</div>
+                  <div x-text="dbTestError" style="white-space: pre-line;"></div>
+                </div>
               </div>
 
               <div class="form-row">
@@ -590,8 +667,11 @@
         installing: false,
         
         // 环境检查
-        envChecks: {},
+        envChecks: [],
         envCheckPassed: false,
+        envCheckLoading: false,
+        envCheckError: '',
+        envCheckSummary: null,
         
         // 数据库配置
         database: {
@@ -647,15 +727,88 @@
         },
         
         async checkEnvironment() {
+          this.envCheckLoading = true;
+          this.envCheckError = '';
+          this.envCheckPassed = false;
+          
           try {
             const res = await fetch('/api/install/check-env');
-            const data = await res.json();
-            this.envChecks = data.checks;
-            this.envCheckPassed = data.success;
+            let data = null;
+            
+            try {
+              data = await res.json();
+            } catch (parseError) {
+              console.error('解析环境检查结果失败:', parseError);
+            }
+            
+            if (!res.ok) {
+              const message = (data && (data.message || data.error)) || `HTTP ${res.status}: ${res.statusText}`;
+              throw new Error(message);
+            }
+            
+            if (!data) {
+              throw new Error('环境检查返回了空数据，请稍后重试。');
+            }
+            
+            const checksArray = this.transformEnvChecks(data.checks);
+            this.envChecks = checksArray;
+            this.envCheckPassed = Boolean(data.success);
+            this.envCheckSummary = this.buildEnvSummary(data.summary, checksArray);
+            
+            if (!checksArray.length && !this.envCheckPassed) {
+              this.envCheckError = data.message || '未获取到环境检查项，请检查服务器日志。';
+              this.envCheckSummary = null;
+            }
           } catch (error) {
             console.error('环境检查失败:', error);
+            const message = error instanceof Error
+              ? error.message
+              : '环境检查请求失败，请检查网络或服务器状态';
+            this.envCheckError = message;
+            this.envChecks = [];
+            this.envCheckSummary = null;
             this.envCheckPassed = false;
+          } finally {
+            this.envCheckLoading = false;
           }
+        },
+        
+        // 转换环境检查结果（从对象转为数组）
+        transformEnvChecks(checks) {
+          if (!checks || typeof checks !== 'object') {
+            return [];
+          }
+          const order = ['nodeVersion', 'nodeModules', 'prismaSchema', 'envExample', 'writable'];
+          const orderIndex = (key) => {
+            const index = order.indexOf(key);
+            return index === -1 ? order.length : index;
+          };
+          return Object.entries(checks)
+            .map(([key, check]) => ({
+              key,
+              required: check?.required ?? key,
+              message: check?.message ?? '',
+              detail: check?.detail ?? '',
+              passed: Boolean(check?.passed),
+            }))
+            .sort((a, b) => orderIndex(a.key) - orderIndex(b.key));
+        },
+        
+        // 构建汇总信息
+        buildEnvSummary(summary, checksArray) {
+          const total = checksArray.length;
+          const passed = checksArray.filter((c) => c.passed).length;
+          const failed = total - passed;
+          
+          if (summary && typeof summary === 'object') {
+            return {
+              total: typeof summary.total === 'number' ? summary.total : total,
+              passed: typeof summary.passed === 'number' ? summary.passed : passed,
+              failed: typeof summary.failed === 'number' ? summary.failed : failed,
+            };
+          }
+          
+          return { total, passed, failed };
         },
         
         async testDatabase() {
@@ -676,11 +829,11 @@
               this.dbTestResult = 'success';
             } else {
               this.dbTestResult = 'error';
-              this.dbTestError = data.message || '数据库连接失败';
+              this.dbTestError = data.message || data.error || '数据库连接失败，请检查配置';
             }
           } catch (error) {
             this.dbTestResult = 'error';
-            this.dbTestError = '请求失败: ' + error.message;
+            this.dbTestError = '请求失败: ' + (error.message || '无法连接到服务器');
           } finally {
             this.dbTesting = false;
           }
@@ -741,14 +894,26 @@
                 this.step = 5;
               }, 1000);
             } else {
-              this.installError = data.message || data.error || '安装失败，请检查配置';
-              this.installSteps[0].status = 'error';
-              this.installSteps[0].message = this.installError;
+              // 更详细的错误处理
+              const errorMessage = data.message || data.error || '安装过程中出现未知错误';
+              this.installError = errorMessage;
+              
+              // 如果返回了步骤信息，使用返回的步骤状态
+              if (data.steps && Array.isArray(data.steps)) {
+                this.installSteps = data.steps;
+              } else {
+                // 否则在第一步标记错误
+                this.installSteps[0].status = 'error';
+                this.installSteps[0].message = errorMessage;
+              }
             }
           } catch (error) {
-            this.installError = '安装请求失败: ' + error.message;
+            const message = error instanceof Error 
+              ? error.message 
+              : '未知错误';
+            this.installError = '安装请求失败: ' + message + '。请检查网络连接和服务器状态。';
             this.installSteps[0].status = 'error';
-            this.installSteps[0].message = this.installError;
+            this.installSteps[0].message = '无法连接到服务器';
           } finally {
             this.installing = false;
           }
@@ -756,9 +921,9 @@
         
         get canProceed() {
           if (this.step === 1) {
-            return this.envCheckPassed;
+            return this.envCheckPassed && !this.envCheckLoading && !this.envCheckError;
           } else if (this.step === 2) {
-            return this.dbTestResult === 'success';
+            return this.dbTestResult === 'success' && !this.dbTesting;
           } else if (this.step === 3) {
             return this.validateAdmin();
           }
